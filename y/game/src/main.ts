@@ -1,5 +1,5 @@
 import Game from "./Wolfie2D/Loop/Game";
-
+import MainMenu from "./Helles/Scenes/mainMenu";
 (function main(){
     //Run and tests 
 
@@ -21,7 +21,7 @@ import Game from "./Wolfie2D/Loop/Game";
     }
     const game = new Game(options);
 
-    // game.start(MainMenu,{});
+    game.start(MainMenu,{});
 })();
 
 function runTests(){};

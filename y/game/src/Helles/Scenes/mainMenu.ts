@@ -26,18 +26,34 @@ export default class MainMenu extends Scene{
 
         // Create a play button
         let playBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x, size.y), text: "Play Game"});
-        playBtn.backgroundColor = Color.WHITE;
-        playBtn.borderColor = Color.BLACK;
+        playBtn.backgroundColor = Color.BLACK;
+        playBtn.borderColor = Color.WHITE;
         playBtn.borderRadius = 0;
         playBtn.setPadding(new Vec2(50, 10));
+        
         playBtn.font = "PixelSimple";
 
-        let LevelBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x, size.y), text: "Level Slection"});
-        LevelBtn.backgroundColor = Color.WHITE;
-        LevelBtn.borderColor = Color.BLACK;
+
+        let LevelBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x , size.y+100), text: "Level Slection"});
+        LevelBtn.backgroundColor = Color.BLACK;
+        LevelBtn.borderColor = Color.WHITE;
         LevelBtn.borderRadius = 0;
         LevelBtn.setPadding(new Vec2(50, 10));
         LevelBtn.font = "PixelSimple";
+
+        let HelpBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x , size.y+200), text: "Help"});
+        HelpBtn.backgroundColor = Color.BLACK;
+        HelpBtn.borderColor = Color.WHITE;
+        HelpBtn.borderRadius = 0;
+        HelpBtn.setPadding(new Vec2(50, 10));
+        HelpBtn.font = "PixelSimple";
+
+        let ControlBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x , size.y+300), text: "Control"});
+        ControlBtn.backgroundColor = Color.BLACK;
+        ControlBtn.borderColor = Color.WHITE;
+        ControlBtn.borderRadius = 0;
+        ControlBtn.setPadding(new Vec2(50, 10));
+        ControlBtn.font = "PixelSimple";
 
         // When the play button is clicked, go to the next scene
         playBtn.onClick = () => {
