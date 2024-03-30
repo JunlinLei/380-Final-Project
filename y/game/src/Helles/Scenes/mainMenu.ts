@@ -5,14 +5,18 @@ import Button from "../../Wolfie2D/Nodes/UIElements/Button";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
 import Scene from "../../Wolfie2D/Scene/Scene";
 import Color from "../../Wolfie2D/Utils/Color";
+import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
+import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 
 export default class MainMenu extends Scene{
 
+    private logo: Sprite;
     animatedSprite: AnimatedSprite;
 
     loadScene(): void {
         // Load the menu song
         // this.load.audio("menu", "hw5_assets/music/menu.mp3");
+        this.load.image("logo","helles_assets/images/helleslogo.png")
     }
 
     startScene(): void {
@@ -23,6 +27,32 @@ export default class MainMenu extends Scene{
         this.viewport.setFocus(size);
 
         this.viewport.setZoomLevel(1);
+
+        this.logo = this.add.sprite("logo","Main")
+
+        //load logo here
+        let center = this.viewport.getCenter();
+        this.logo.position.set(size.x,size.y-100);        
+        
+        // let center = this.viewport.getCenter();
+        // this.logo.position.set(center.x, center.y);
+
+
+
+        // // We can also create game objects (such as graphics and UIElements) without using loaded assets
+        // // Lets add a rectangle to use as the player object
+        // // For some game objects, you have to specify an options object. In this case, position and size:
+        // let options = {
+        //     size: new Vec2(50, 50),
+        //     position: new Vec2(center.x, center.y + 100)
+        // }
+
+        // // Create the rect
+        // this.logo = this.add.graphic(GraphicType.RECT, "primary", options);
+
+        // // Now, let's change the color of our player
+        // this.player.color = Color.ORANGE;
+        
 
         // Create a play button
         let playBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x, size.y), text: "Play Game"});
