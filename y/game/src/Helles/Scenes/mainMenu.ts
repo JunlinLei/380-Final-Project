@@ -10,7 +10,7 @@ import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 
 export default class MainMenu extends Scene{
 
-    private logo: Sprite;
+    private logoImage: Sprite;
     animatedSprite: AnimatedSprite;
 
     loadScene(): void {
@@ -28,14 +28,14 @@ export default class MainMenu extends Scene{
 
         this.viewport.setZoomLevel(1);
 
-        this.logo = this.add.sprite("logo","Main")
-
+        this.logoImage = this.add.sprite("logo","Main")
+        this.logoImage.scale.set(0.25,0.25)
         //load logo here
         let center = this.viewport.getCenter();
-        this.logo.position.set(size.x,size.y-100);        
+        // let setlogo = <Sprite>this.add.sprite()        
         
         // let center = this.viewport.getCenter();
-        // this.logo.position.set(center.x, center.y);
+        this.logoImage.position.set(center.x, center.y-220);
 
 
 
