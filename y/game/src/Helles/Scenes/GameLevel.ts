@@ -14,9 +14,9 @@ import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 // import BalloonController from "../Enemies/BalloonController";
 // import { HW5_Color } from "../hw5_color";
-// import { HW5_Events } from "../hw5_enums";
+import { Helles_Events } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
-// import PlayerController from "../Player/PlayerController";
+import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
 
 
@@ -48,7 +48,7 @@ export default class GameLevel extends Scene{
 
 
         //disable player movement first 
-        Input.disableInput();
+        // Input.disableInput();
         
     }
 
@@ -76,6 +76,8 @@ export default class GameLevel extends Scene{
     protected subscribeToEvents(){
         //no events yet
         this.receiver.subscribe([
+            Helles_Events.LEVEL_START,
+            Helles_Events.LEVEL_END,
 
         ])
     }
@@ -99,6 +101,7 @@ export default class GameLevel extends Scene{
         this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(14,14)))
         this.player.colliderOffset.set(0,2);
         //add player AI here, not sure if necessary 
+        this.player.addAI(PlayerController, {playerType: "platformer", tilemap: "Main"});
 
         this.player.setGroup("player");
         this.viewport.follow(this.player);
