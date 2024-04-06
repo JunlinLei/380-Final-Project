@@ -7,6 +7,7 @@ import Scene from "../../Wolfie2D/Scene/Scene";
 import Color from "../../Wolfie2D/Utils/Color";
 import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
+import Level1 from "./Level1";
 
 export default class MainMenu extends Scene{
 
@@ -88,27 +89,27 @@ export default class MainMenu extends Scene{
         // When the play button is clicked, go to the next scene
         playBtn.onClick = () => {
             
-            // let sceneOptions = {
-            //     physics: {
-            //         groupNames: ["ground", "player", "balloon"],
-            //         collisions:
-            //         [
-            //             [0, 1, 1],
-            //             [1, 0, 0],
-            //             [1, 0, 0]
-            //         ]
-            //     }
-            // }
-            // this.sceneManager.changeToScene(Level1, {}, sceneOptions);
+            let sceneOptions = {
+                physics: {
+                    groupNames: ["ground", "player", "balloon"],
+                    collisions:
+                    [
+                        [0, 1, 1],
+                        [1, 0, 0],
+                        [1, 0, 0]
+                    ]
+                }
+            }
+            this.sceneManager.changeToScene(Level1, {}, sceneOptions);
         }
 
-        // Scene has started, so start playing music
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
+        // Scene has started, so start playing music no music yet
+        // this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
     }
 
     unloadScene(): void {
         // The scene is being destroyed, so we can stop playing the song
-        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "menu"});
+        // this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "menu"});
     }
 
 }
