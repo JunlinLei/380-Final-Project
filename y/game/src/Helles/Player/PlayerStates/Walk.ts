@@ -15,12 +15,13 @@ export default class Walk extends OnGround {
         super.update(deltaT);
 
         let dir = this.getInputDirection(); 
-        console.log(dir);
+        // console.log(dir);
         this.owner.animation.playIfNotAlready("WALK_RIGHT",true);
 
         if(dir.isZero()){
             this.finished(PlayerStates.IDLE);
         }
+
         this.parent.velocity.x = dir.x * this.parent.speed
 
 		this.owner.move(this.parent.velocity.scaled(deltaT));

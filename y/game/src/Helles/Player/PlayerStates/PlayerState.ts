@@ -14,6 +14,7 @@ export default abstract class PlayerState extends State {
 	gravity: number = 1000;
 	parent: PlayerController;
 	positionTimer: Timer;
+    // direction : string ; 
 
     constructor(parent: StateMachine, owner: GameNode){
 		super(parent);
@@ -22,7 +23,7 @@ export default abstract class PlayerState extends State {
 		this.positionTimer.start();
 	}
 
-    //input no decide yet
+    //input no decide yetd
     handleInput(event: GameEvent): void {
         
     }
@@ -33,13 +34,48 @@ export default abstract class PlayerState extends State {
         let direction = Vec2.ZERO; 
         direction.x = (Input.isPressed("left")? -1 : 0) + (Input.isPressed("right")? 1: 0);
         direction.y = (Input.isJustPressed("jump") ? -1 : 0);
+        // console.log(this.direction)
         return direction;
     }
 
+    getDirection() : string {
+       
+        let dir : string;
+
+        if(Input.isPressed("left"))
+            {
+                this.parent.direction = "left"
+                console.log(this.parent.direction)
+            }
+
+        else if(Input.isPressed("right"))
+            {
+                this.parent.direction = "right"
+            }
+
+        return this.parent.direction;
+         
+    }
+
+    // getAttackDirection(): Vec2{
+    //     let direction = Vec2.ZERO; 
+    //     if(Input.isPressed("attack"))
+    //         {
+    //             direction = this.getInputDirection();
+    //         }
+
+    //     return direction;
+    // }
+
     update(deltaT: number): void {
         // gravity 
+        
+        this.getDirection()
+
+
         if(this.positionTimer.isStopped()){
             this.emitter.fireEvent(Helles_Events.PLAYER_MOVE,{position: this.owner.position.clone()})
+            // this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK,{position: this.owner.position.clone()})
             this.positionTimer.start();
         }
 

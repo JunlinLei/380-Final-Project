@@ -10,6 +10,9 @@ import Idle from "./PlayerStates/Idle";
 import InAir from "./PlayerStates/InAir";
 import Jump from "./PlayerStates/Jump";
 import Walk from "./PlayerStates/Walk";
+import Input from "../../Wolfie2D/Input/Input";
+import GameEvent from "../../Wolfie2D/Events/GameEvent";
+import Attack from "./PlayerStates/Attack";
 
 
 export enum PlayerType {
@@ -24,7 +27,7 @@ export enum PlayerStates {
 	JUMP = "jump",
     FALL = "fall",
 	PREVIOUS = "previous",
-    Attack = "attack"
+    ATTACK = "attack"
 }
 
 export default class PlayerController extends StateMachineAI{
@@ -35,7 +38,7 @@ export default class PlayerController extends StateMachineAI{
 	MIN_SPEED: number = 300;
     MAX_SPEED: number = 400;
     tilemap: OrthogonalTilemap;
-
+    direction : string = "right";
     newposition : Vec2 = Vec2.ZERO;
 
     initializeAI(owner: GameNode, options: Record<string, any>): void {
@@ -60,8 +63,8 @@ export default class PlayerController extends StateMachineAI{
         let fall = new Fall(this, this.owner);
         this.addState(PlayerStates.FALL, fall);
         //implement attack later
-        // let attack = new Attack(this,this.owner);
-        // this.addState(PlayerStates.Attack, attack)
+        let attack = new Attack(this,this.owner);
+        this.addState(PlayerStates.ATTACK, attack)
         
         this.initialize(PlayerStates.IDLE);
     }
@@ -78,8 +81,18 @@ export default class PlayerController extends StateMachineAI{
             super.changeState(state);
     }
 
+    handleEvent(event: GameEvent): void {
+        
+    }
+
     update(deltaT: number): void {
         super.update(deltaT);
+
+        // if(Input.isJustPressed("attack"))
+        //     {
+                
+        //         this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction: this.currentState} )
+        //     }
 
         if(this.currentState instanceof Jump){
 			Debug.log("playerstate", "Player State: Jump");
@@ -92,6 +105,9 @@ export default class PlayerController extends StateMachineAI{
 		} 
         else if(this.currentState instanceof Fall){
             Debug.log("playerstate", "Player State: Fall");
+        }
+        else if(this.currentState instanceof Attack){
+            Debug.log("playerstate", "Player State: Attack");
         }
     }
 }

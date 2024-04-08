@@ -6,12 +6,14 @@ import { TweenableProperties } from "../../Wolfie2D/Nodes/GameNode";
 import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 import Rect from "../../Wolfie2D/Nodes/Graphics/Rect";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import Label from "../../Wolfie2D/Nodes/UIElements/Label";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
 import Scene from "../../Wolfie2D/Scene/Scene";
 import Timer from "../../Wolfie2D/Timing/Timer";
 import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
+import ArrowController from "../Arrow/ArrowController";
 // import BalloonController from "../Enemies/BalloonController";
 // import { HW5_Color } from "../hw5_color";
 import { Helles_Events } from "../helles_enums";
@@ -26,7 +28,7 @@ export default class GameLevel extends Scene{
     protected playerSpawn: Vec2;
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
-
+    protected arrows : Array<Sprite> = new Array(5);
 
     //we first start scene 
     startScene(): void {
@@ -37,6 +39,7 @@ export default class GameLevel extends Scene{
         this.initViewport();
         this.initPlayer()
         this.subscribeToEvents(); 
+        // this.initArrows()
 
         this.respawnTimer = new Timer(1200, ()=>{
             //later on in this project, check life count, if life is zero go back to main menu 
@@ -53,7 +56,20 @@ export default class GameLevel extends Scene{
     }
 
     updateScene(deltaT: number): void {
-        
+        while(this.receiver.hasNextEvent()){
+            let event = this.receiver.getNextEvent();
+            switch(event.type){
+                case Helles_Events.PLAYER_ATTACK:
+                    {
+                        let position = event.data.get("position");
+                        let dirction = event.data.get("direction")
+                        
+                        this.spawnArrow(position,dirction);
+                    }
+                    break;
+            }
+           
+        }
     }
 
     
@@ -78,7 +94,7 @@ export default class GameLevel extends Scene{
         this.receiver.subscribe([
             Helles_Events.LEVEL_START,
             Helles_Events.LEVEL_END,
-
+            Helles_Events.PLAYER_ATTACK
         ])
     }
 
@@ -108,11 +124,43 @@ export default class GameLevel extends Scene{
 
     }
 
+    protected initArrows(postion:Vec2, aiOptions: Record<string, any>):void{
+        
+        let arrow = this.add.sprite("arrow", "primary")
+        arrow.position.set(postion.x, postion.y)
+        arrow.addPhysics();
+        arrow.addAI(ArrowController, aiOptions);
+        arrow.setGroup("arrow")
+    }
+
+    protected spawnArrow(position : Vec2 , dirction:string):void{
+        //  let arrow : Sprite = null ; 
+
+                let arrowPostion : Vec2 = new Vec2(0,0);
+                if(dirction === "right" )
+                    {
+                        arrowPostion.set(position.x+32,position.y)
+                        this.initArrows(position,{direction : 1})
+                        // arrow.position.set(position.x + 32, position.y);
+                        // console.log(velocity)
+                        // arrow.move(velocity.scale(0.16))
+                    }
+                else if (dirction === "left" )
+                    {
+                        arrowPostion.set(position.x-32,position.y)
+                        this.initArrows(position, {direction : -1 })
+                        // console.log(velocity)
+                        // arrow.move(velocity.scale(0.16))
+                    }
+
+                
+            // }
+    }
 
     //respawn the player 
     protected respawnPlayer():void{
         this.sceneManager.changeToScene(MainMenu,{});
-       
+       ``
          Input.enableInput();
 
          //stop paticle system, no sure if we need it here 

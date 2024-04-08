@@ -3,17 +3,29 @@
     "public": "y",
     "ignore": [
       "firebase.json",
-      "/.*",
+      "*/.",
       "/node_modules/"
     ],
-    "rewrites": [
+    "redirects": [
       {
-        "source": "/benchmark1/",
-        "destination": "/index.html"
+        "source": "/",
+        "destination": "/game/dist/index.html",
+        "type": 301
       },
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/benchmark1",
+        "destination": "/index.html",
+        "type": 301
+      },
+      {
+        "source":"/benchmark2",
+        "destination": "/game/dist/index.html",
+        "type": 301
+      },
+      {
+        "source":"/benchmark3",
+        "destination": "/404.html",
+        "type": 301
       }
     ]
   }
