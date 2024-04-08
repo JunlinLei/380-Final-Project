@@ -35,8 +35,10 @@ export default class GameLevel extends Scene{
         //game level standard initializations 
         this.initLayers();
         this.initViewport();
-        this.initPlayer()
+        this.initPlayer();
+        this.initializeNPCs();
         this.subscribeToEvents(); 
+
 
         this.respawnTimer = new Timer(1200, ()=>{
             //later on in this project, check life count, if life is zero go back to main menu 
@@ -70,6 +72,21 @@ export default class GameLevel extends Scene{
     //init viewport 
     protected initViewport(): void{
         this.viewport.setZoomLevel(2)
+    }
+    protected initializeNPCs(): void {
+        console.log("initializing NPCs")
+        let red = this.load.getObject("lurker");
+    
+        for (let enemyPos of red.enemies) {
+            // Create the NPC with the 'RedEnemy' spritesheet
+            let npc = this.add.animatedSprite("lurker", "primary");
+            console.log(npc);
+            npc.position.set(enemyPos[0], enemyPos[1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(7, 7)), null, false);
+            npc.animation.play("IDLE");
+
+            // Additional setup...
+        }   
     }
 
     //subscripte all events here 
