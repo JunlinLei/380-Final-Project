@@ -15,6 +15,7 @@ export default class Move extends ArrowState{
         super.update(deltaT);
 
         this.parent.velocity.x = this.parent.direction * this.parent.speed;
+        console.log(this.parent.direction);
 		this.owner.move(this.parent.velocity.scaled(deltaT));
     }
 
