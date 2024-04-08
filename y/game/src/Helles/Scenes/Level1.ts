@@ -9,7 +9,7 @@ export default class Level1 extends GameLevel{
     loadScene(): void {
 
         //load map and player
-        this.load.tilemap("level1","helles_assets/tilemaps/level1.json")
+        this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json")
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
 
         //add other monster and music later on 
