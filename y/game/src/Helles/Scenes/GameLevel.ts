@@ -39,7 +39,6 @@ export default class GameLevel extends Scene{
         this.initViewport();
         this.initPlayer()
         this.subscribeToEvents(); 
-        // this.initArrows()
 
 
         this.respawnTimer = new Timer(1200, ()=>{
