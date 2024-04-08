@@ -6,7 +6,7 @@ export default class Fall extends InAir {
     owner: AnimatedSprite; 
 
     onEnter(options: Record<string, any>): void {
-        this.owner.animation.play("IDLE_LEFT",true);
+        this.owner.animation.play("IDLE_RIGHT",true);
     }
 
     onExit(): Record<string, any> {
