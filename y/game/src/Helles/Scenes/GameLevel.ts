@@ -40,6 +40,7 @@ export default class GameLevel extends Scene{
         this.initViewport();
         this.initPlayer()
         this.initializeNPCs();
+        this.initializeNPCs();
         this.subscribeToEvents(); 
         // this.initArrows()
 

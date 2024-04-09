@@ -45,7 +45,6 @@ export default abstract class PlayerState extends State {
         if(Input.isPressed("left"))
             {
                 this.parent.direction = "left"
-                console.log(this.parent.direction)
             }
 
         else if(Input.isPressed("right"))
