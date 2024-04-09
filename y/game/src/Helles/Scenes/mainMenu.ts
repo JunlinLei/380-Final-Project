@@ -8,6 +8,9 @@ import Color from "../../Wolfie2D/Utils/Color";
 import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 import Level1 from "./Level1";
+import LevelSelection from "./levelSelection";
+import Control from "./control";
+import Help from "./help";
 
 export default class MainMenu extends Scene{
 
@@ -102,6 +105,19 @@ export default class MainMenu extends Scene{
             }
             this.sceneManager.changeToScene(Level1, {}, sceneOptions);
         }
+
+        LevelBtn.onClick = () => {
+            this.sceneManager.changeToScene(LevelSelection, {});
+        }
+
+        ControlBtn.onClick = () => {
+            this.sceneManager.changeToScene(Control, {});
+        }
+
+        HelpBtn.onClick = () => {
+            this.sceneManager.changeToScene(Help, {});
+        }
+
 
         // Scene has started, so start playing music no music yet
         // this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
