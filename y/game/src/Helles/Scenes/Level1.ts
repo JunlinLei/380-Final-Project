@@ -20,10 +20,6 @@ export default class Level1 extends GameLevel{
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
 
         //add other monster and music later on 
-        this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
-
-        // load the lurker (enemy) position data
-        this.load.object("lurker", "helles_assets/data/enemies/lurker.json")
 
     }
 

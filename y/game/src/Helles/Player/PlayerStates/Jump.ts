@@ -15,7 +15,6 @@ export default class Jump extends InAir {
     update(deltaT: number): void {
         super.update(deltaT);
         this.owner.animation.play("JUMP_RIGHT",true);
-        console.log(this.owner.animation.isPlaying("JUMP_RIGHT"));
         if(this.owner.onCeiling){
             this.parent.velocity.y = 0
         }

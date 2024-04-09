@@ -37,8 +37,7 @@ export default class GameLevel extends Scene{
         //game level standard initializations 
         this.initLayers();
         this.initViewport();
-        this.initPlayer();
-        this.initializeNPCs();
+        this.initPlayer()
         this.subscribeToEvents(); 
         // this.initArrows()
 
@@ -118,6 +117,22 @@ export default class GameLevel extends Scene{
     // UI for the games 
     protected addUI(){
         //all in game UI goes here 
+    }
+
+    protected initializeNPCs(): void {
+        console.log("initializing NPCs")
+        let red = this.load.getObject("lurker");
+    
+        for (let enemyPos of red.enemies) {
+            // Create the NPC with the 'RedEnemy' spritesheet
+            let npc = this.add.animatedSprite("lurker", "primary");
+            console.log(npc);
+            npc.position.set(enemyPos[0], enemyPos[1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(7, 7)), null, false);
+            npc.animation.play("IDLE");
+
+            // Additional setup...
+        }   
     }
 
     //init player 
