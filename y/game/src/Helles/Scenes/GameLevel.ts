@@ -14,9 +14,10 @@ import Timer from "../../Wolfie2D/Timing/Timer";
 import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import ArrowController from "../Arrow/ArrowController";
+import EnemyController from "../Enemies/EnemyController";
 // import BalloonController from "../Enemies/BalloonController";
 // import { HW5_Color } from "../hw5_color";
-import { Helles_Events } from "../helles_enums";
+import { Helles_Events,BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
@@ -28,7 +29,7 @@ export default class GameLevel extends Scene{
     protected playerSpawn: Vec2;
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
-    protected arrows : Array<Sprite> = new Array(5);
+    protected arrows : Sprite;
 
     //we first start scene 
     startScene(): void {
@@ -38,8 +39,9 @@ export default class GameLevel extends Scene{
         this.initLayers();
         this.initViewport();
         this.initPlayer()
+        this.initializeNPCs();
         this.subscribeToEvents(); 
-
+        // this.initArrows()
 
         this.respawnTimer = new Timer(1200, ()=>{
             //later on in this project, check life count, if life is zero go back to main menu 
@@ -48,14 +50,11 @@ export default class GameLevel extends Scene{
             this.player.unfreeze();
 
         })
-
-
-        //disable player movement first 
-        // Input.disableInput();
         
     }
 
     updateScene(deltaT: number): void {
+
         while(this.receiver.hasNextEvent()){
             let event = this.receiver.getNextEvent();
             switch(event.type){
@@ -67,6 +66,22 @@ export default class GameLevel extends Scene{
                         this.spawnArrow(position,dirction);
                     }
                     break;
+
+                case BattlerEvent.HIT:
+                    {
+                        let node = this.sceneGraph.getNode(event.data.get("node"));
+                        let other = this.sceneGraph.getNode(event.data.get("other"));
+                        console.log(node)
+                        console.log(other);
+                        if(node === this.arrows)
+                            {
+                                console.log("hit event");
+                                node.destroy();
+                                other.destroy();
+                            }
+                        else(node)
+                    }
+                
             }
            
         }
@@ -87,21 +102,6 @@ export default class GameLevel extends Scene{
     protected initViewport(): void{
         this.viewport.setZoomLevel(2)
     }
-    protected initializeNPCs(): void {
-        console.log("initializing NPCs")
-        let red = this.load.getObject("lurker");
-    
-        for (let enemyPos of red.enemies) {
-            // Create the NPC with the 'RedEnemy' spritesheet
-            let npc = this.add.animatedSprite("lurker", "primary");
-            console.log(npc);
-            npc.position.set(enemyPos[0], enemyPos[1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(7, 7)), null, false);
-            npc.animation.play("IDLE");
-
-            // Additional setup...
-        }   
-    }
 
     //subscripte all events here 
     protected subscribeToEvents(){
@@ -109,7 +109,8 @@ export default class GameLevel extends Scene{
         this.receiver.subscribe([
             Helles_Events.LEVEL_START,
             Helles_Events.LEVEL_END,
-            Helles_Events.PLAYER_ATTACK
+            Helles_Events.PLAYER_ATTACK,
+            BattlerEvent.HIT
         ])
     }
 
@@ -127,9 +128,13 @@ export default class GameLevel extends Scene{
             let npc = this.add.animatedSprite("lurker", "primary");
             console.log(npc);
             npc.position.set(enemyPos[0], enemyPos[1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(7, 7)), null, false);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             npc.animation.play("IDLE");
+            npc.setTrigger("arrow", BattlerEvent.HIT, null);
+            npc.setGroup("enemy");
 
+             // send player position
+          npc.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});// 
             // Additional setup...
         }   
     }
@@ -145,7 +150,7 @@ export default class GameLevel extends Scene{
             this.playerSpawn = Vec2.ZERO;
         }
         this.player.position.copy(this.playerSpawn);
-        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(14,14)))
+        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20,22)))
         this.player.colliderOffset.set(0,2);
         //add player AI here, not sure if necessary 
         this.player.addAI(PlayerController, {playerType: "platformer", tilemap: "Main"});
@@ -157,18 +162,18 @@ export default class GameLevel extends Scene{
 
     protected initArrows(postion:Vec2, aiOptions: Record<string, any>):void{
         
-        let arrow = this.add.sprite("arrow", "primary")
-        arrow.position.set(postion.x, postion.y)
-        arrow.addPhysics();
-        arrow.addAI(ArrowController, aiOptions);
-        arrow.setGroup("arrow")
+        this.arrows = this.add.sprite("arrow", "primary")
+        this.arrows.position.set(postion.x, postion.y)
+        this.arrows.addPhysics(new AABB(Vec2.ZERO,new Vec2(16,8)));
+        this.arrows.addAI(ArrowController, aiOptions);
+        this.arrows.setGroup("arrow")
     }
 
     protected spawnArrow(position : Vec2 , dirction:string):void{
         //  let arrow : Sprite = null ; 
 
                 let arrowPostion : Vec2 = new Vec2(0,0);
-                if(dirction === "right" )
+                if(dirction === "right" )   
                     {
                         arrowPostion.set(position.x+32,position.y)
                         this.initArrows(position,{direction : 1})

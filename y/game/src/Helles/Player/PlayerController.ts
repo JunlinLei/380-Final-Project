@@ -13,6 +13,7 @@ import Walk from "./PlayerStates/Walk";
 import Input from "../../Wolfie2D/Input/Input";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Attack from "./PlayerStates/Attack";
+import InAirAttack from "./PlayerStates/Inairattack";
 
 
 export enum PlayerType {
@@ -27,7 +28,8 @@ export enum PlayerStates {
 	JUMP = "jump",
     FALL = "fall",
 	PREVIOUS = "previous",
-    ATTACK = "attack"
+    ATTACK = "attack",
+    INAIRATTACK = "inairattack"
 }
 
 export default class PlayerController extends StateMachineAI{
@@ -40,7 +42,6 @@ export default class PlayerController extends StateMachineAI{
     tilemap: OrthogonalTilemap;
     direction : string = "right";
     newposition : Vec2 = Vec2.ZERO;
-
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
 
@@ -65,6 +66,9 @@ export default class PlayerController extends StateMachineAI{
         //implement attack later
         let attack = new Attack(this,this.owner);
         this.addState(PlayerStates.ATTACK, attack)
+
+        let inairattack = new InAirAttack(this,this.owner);
+        this.addState(PlayerStates.INAIRATTACK, inairattack)
         
         this.initialize(PlayerStates.IDLE);
     }
