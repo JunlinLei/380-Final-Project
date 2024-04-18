@@ -27,7 +27,9 @@ export default abstract class ArrowState extends State {
 
 
     update(deltaT: number): void {
-        
+        if(this.owner.onWall){
+            this.owner.destroy();
+        }
     }
 
 }

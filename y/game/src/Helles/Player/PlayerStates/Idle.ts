@@ -20,21 +20,15 @@ export default class Idle extends OnGround {
 			if(Input.isPressed("run")){
 				this.finished(PlayerStates.RUN);
 			} 
-			// else if(Input.isPressed("attack")){
-			// 	this.finished(PlayerStates.ATTACK)
-			// } 
-			
 				else{
 				this.finished(PlayerStates.WALK);
 			}
 		}
 
-		if(Input.isPressed("attack"))
+		if(Input.isJustPressed("attack"))
 			{
 				this.finished(PlayerStates.ATTACK);
 				
-				// this.owner.animation.queue("SHOOT_RIGHT",true)
-				// console.log(this.owner.animation.isPlaying("SHOOT_RIGHT"))
 			}
 		
 		this.parent.velocity.x = 0;

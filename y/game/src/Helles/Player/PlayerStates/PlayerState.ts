@@ -56,15 +56,6 @@ export default abstract class PlayerState extends State {
          
     }
 
-    // getAttackDirection(): Vec2{
-    //     let direction = Vec2.ZERO; 
-    //     if(Input.isPressed("attack"))
-    //         {
-    //             direction = this.getInputDirection();
-    //         }
-
-    //     return direction;
-    // }
 
     update(deltaT: number): void {
         // gravity 

@@ -14,9 +14,10 @@ import Timer from "../../Wolfie2D/Timing/Timer";
 import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import ArrowController from "../Arrow/ArrowController";
+import EnemyController from "../Enemies/EnemyController";
 // import BalloonController from "../Enemies/BalloonController";
 // import { HW5_Color } from "../hw5_color";
-import { Helles_Events } from "../helles_enums";
+import { Helles_Events,BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
@@ -28,7 +29,7 @@ export default class GameLevel extends Scene{
     protected playerSpawn: Vec2;
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
-    protected arrows : Array<Sprite> = new Array(5);
+    protected arrows : Sprite;
 
     //we first start scene 
     startScene(): void {
@@ -68,6 +69,22 @@ export default class GameLevel extends Scene{
                         this.spawnArrow(position,dirction);
                     }
                     break;
+
+                case BattlerEvent.HIT:
+                    {
+                        let node = this.sceneGraph.getNode(event.data.get("node"));
+                        let other = this.sceneGraph.getNode(event.data.get("other"));
+                        console.log(node)
+                        console.log(other);
+                        if(node === this.arrows)
+                            {
+                                console.log("hit event");
+                                node.destroy();
+                                other.destroy();
+                            }
+                        else(node)
+                    }
+                
             }
            
         }
@@ -95,7 +112,8 @@ export default class GameLevel extends Scene{
         this.receiver.subscribe([
             Helles_Events.LEVEL_START,
             Helles_Events.LEVEL_END,
-            Helles_Events.PLAYER_ATTACK
+            Helles_Events.PLAYER_ATTACK,
+            BattlerEvent.HIT
         ])
     }
 
@@ -113,9 +131,13 @@ export default class GameLevel extends Scene{
             let npc = this.add.animatedSprite("lurker", "primary");
             console.log(npc);
             npc.position.set(enemyPos[0], enemyPos[1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(7, 7)), null, false);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             npc.animation.play("IDLE");
+            npc.setTrigger("arrow", BattlerEvent.HIT, null);
+            npc.setGroup("enemy");
 
+             // send player position
+          npc.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});// 
             // Additional setup...
         }   
     }
@@ -131,7 +153,7 @@ export default class GameLevel extends Scene{
             this.playerSpawn = Vec2.ZERO;
         }
         this.player.position.copy(this.playerSpawn);
-        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(14,14)))
+        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20,22)))
         this.player.colliderOffset.set(0,2);
         //add player AI here, not sure if necessary 
         this.player.addAI(PlayerController, {playerType: "platformer", tilemap: "Main"});
@@ -143,11 +165,11 @@ export default class GameLevel extends Scene{
 
     protected initArrows(postion:Vec2, aiOptions: Record<string, any>):void{
         
-        let arrow = this.add.sprite("arrow", "primary")
-        arrow.position.set(postion.x, postion.y)
-        arrow.addPhysics();
-        arrow.addAI(ArrowController, aiOptions);
-        arrow.setGroup("arrow")
+        this.arrows = this.add.sprite("arrow", "primary")
+        this.arrows.position.set(postion.x, postion.y)
+        this.arrows.addPhysics(new AABB(Vec2.ZERO,new Vec2(16,8)));
+        this.arrows.addAI(ArrowController, aiOptions);
+        this.arrows.setGroup("arrow")
     }
 
     protected spawnArrow(position : Vec2 , dirction:string):void{
