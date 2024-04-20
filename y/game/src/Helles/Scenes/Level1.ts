@@ -9,9 +9,12 @@ export default class Level1 extends GameLevel{
     loadScene(): void {
 
         //load map and player
-        this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json")
-        this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
-        this.load.image("arrow","helles_assets/spritesheets/arrow.png")
+        this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json");
+        this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
+        this.load.image("arrow","helles_assets/spritesheets/arrow.png");
+
+        // load background image for level 1
+        this.load.image("trees", "helles_assets/images/Reverse_forrest.jpg");
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
@@ -26,8 +29,11 @@ export default class Level1 extends GameLevel{
     }
 
     startScene(): void {
+
+        
         //Add tile map 
-        this.add.tilemap("level1", new Vec2(2,2))
+        this.add.tilemap("level1", new Vec2(2,2));
+
         this.viewport.setBounds(0,0, 64*32,20*32);
 
         this.playerSpawn = new Vec2(5*32, 14*32)

@@ -66,13 +66,13 @@ export default class EnemyController extends StateMachineAI {
         let playerStandTile = this.tilemap.getColRowAt(this.newPosition);
         let tileValue = this.tilemap.getTileAtRowCol(playerStandTile); 
         
-        console.log("tile value: "+tileValue);
+        // console.log("tile value: "+tileValue);
 
        if (this.tilemap.getTileAtRowCol(playerStandTile) !== 14) {
             if (tileValue === 0) {
                 this.direction.x = -1;
             }
-            console.log("next tile is not walkable");
+            // console.log("next tile is not walkable");
             // this.tilemap.setTileAtRowCol(playerStandTile,9)
             // this.emitter.fireEvent(he.PLAYER_HIT_SWITCH)
         }

@@ -11,6 +11,7 @@ import Label from "../../Wolfie2D/Nodes/UIElements/Label";
  * Junlin
  */
 export default class Control extends Scene {
+    
     private logoImage: Sprite;
     private TitleFront: Sprite;
     private TitleBack: Sprite;

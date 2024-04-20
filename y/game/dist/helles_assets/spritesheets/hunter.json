@@ -14,69 +14,69 @@
         "name": "IDLE_LEFT",
         "repeat": true,
         "frames": [
-          { "index": 0, "duration": 10 },
-          { "index": 1, "duration": 10 }
+          { "index": 0, "duration": 15 },
+          { "index": 1, "duration": 15 }
         ]
       },
       {
         "name": "IDLE_RIGHT",
         "repeat": true,
         "frames": [
-          { "index": 2, "duration": 10 },
-          { "index": 3, "duration": 10 }
+          { "index": 2, "duration": 15 },
+          { "index": 3, "duration": 15 }
         ]
       },
       {
         "name": "WALK_LEFT",
         "repeat": true,
         "frames": [
-          { "index": 4, "duration": 10 },
-          { "index": 5, "duration": 10 }
+          { "index": 4, "duration": 6 },
+          { "index": 5, "duration": 6 }
         ]
       },
       {
         "name": "WALK_RIGHT",
         "repeat": true,
         "frames": [
-          { "index": 6, "duration": 10 },
-          { "index": 7  , "duration": 10 }
+          { "index": 6, "duration": 6 },
+          { "index": 7  , "duration": 6 }
         ]
       },
       {
         "name": "SHOOT_LEFT",
         "repeat": true,
         "frames": [
-          { "index": 8, "duration": 8 },
-          { "index": 9, "duration": 8 },
-          { "index": 10, "duration": 6 },
-          { "index": 11, "duration": 8 }        ]
+          { "index": 8, "duration": 4 },
+          { "index": 9, "duration": 4 },
+          { "index": 10, "duration": 4 },
+          { "index": 11, "duration": 4 }        ]
       },
       {
         "name": "SHOOT_RIGHT",
         "repeat": true,
         "frames": [
-          { "index": 12, "duration": 8 },
-          { "index": 13, "duration": 8},
-          { "index": 14, "duration": 6 },
-          { "index": 15, "duration": 6 }
+          { "index": 12, "duration": 4 },
+          { "index": 13, "duration": 4},
+          { "index": 14, "duration": 4 },
+          { "index": 15, "duration": 4 }
         ]
       },
       {
         "name": "JUMP_LEFT",
         "repeat": false,
         "frames": [
-          { "index": 16, "duration": 10 },
-          { "index": 17, "duration": 10 },
-          { "index": 18, "duration": 10 }
+          { "index": 16, "duration": 6 },
+          { "index": 17, "duration": 8 },
+          { "index": 18, "duration": 6 }
         ]
       },
       {
         "name": "JUMP_RIGHT",
         "repeat": false,
         "frames": [
-          { "index": 19, "duration": 10 },
-          { "index": 20, "duration": 10 },
-          { "index": 21, "duration": 10 }
+          { "index": 19, "duration": 6 },
+          { "index": 20, "duration": 8 },
+          { "index": 21, "duration": 6 }
         ]
       }
     ]

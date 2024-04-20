@@ -3,7 +3,7 @@ export enum Helles_Events {
     PLAYER_JUMP = "PlayerJump",
     // PLAYER_HIT_SWITCH = "PlayerHitSwitch",
     PLAYER_ATTACK = "PlayerAttack",
-    ARROW_HIT_ENEMT ="ArrowHitEnemy",
+    ARROW_HIT_ENEMY ="ArrowHitEnemy",
     PLAYER_ENTERED_LEVEL_END = "PlayerEnteredLevelEnd",
     LEVEL_START = "LevelStart",
     LEVEL_END = "LevelEnd",

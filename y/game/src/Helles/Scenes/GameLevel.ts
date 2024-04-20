@@ -22,8 +22,7 @@ import { Helles_Events,BattlerEvent } from "../helles_enums";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
 
-
-export default class GameLevel extends Scene{
+export default class GameLevel extends Scene {
     
     // Every level will have a player, which will be an animated sprite
     protected playerSpawn: Vec2;
@@ -34,15 +33,13 @@ export default class GameLevel extends Scene{
     //we first start scene 
     startScene(): void {
         
-
         //game level standard initializations 
         this.initLayers();
         this.initViewport();
-        this.initPlayer()
+        this.initPlayer();
         this.initializeNPCs();
         this.subscribeToEvents(); 
         // this.initArrows()
-
         this.respawnTimer = new Timer(1200, ()=>{
             //later on in this project, check life count, if life is zero go back to main menu 
             this.respawnPlayer();
@@ -50,6 +47,16 @@ export default class GameLevel extends Scene{
             this.player.unfreeze();
 
         })
+	/* ##### DO NOT MODIFY ##### */
+		// Create a background layer
+		// this.addLayer("background", 0);
+
+		// Add in the background image
+
+
+		// Create a layer to serve as our main game - Feel free to use this for your own assets
+		// It is given a depth of 5 to be above our background
+		// this.addLayer("primary", 5);
 
 
         //disable player movement first 
@@ -98,7 +105,15 @@ export default class GameLevel extends Scene{
         this.addUILayer("UI")
 
         //Layer for player and enemies 
-        this.addLayer("primary",1)
+        this.addLayer("primary",5)
+
+        //add background layer
+        this.addLayer("background", 0);
+        let bg = this.add.sprite("trees", "background");
+
+		bg.scale.set(1.2, 1);
+
+		bg.position.copy(this.viewport.getCenter());
     }
 
     //init viewport 
@@ -199,7 +214,7 @@ export default class GameLevel extends Scene{
     //respawn the player 
     protected respawnPlayer():void{
         this.sceneManager.changeToScene(MainMenu,{});
-       ``
+       
          Input.enableInput();
 
          //stop paticle system, no sure if we need it here 

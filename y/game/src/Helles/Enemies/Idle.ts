@@ -21,9 +21,6 @@ export default class Idle extends EnemyState {
         this.parent.velocity.x = this.parent.direction.x * this.parent.speed;
 		this.owner.move(this.parent.velocity.scaled(deltaT));
 		// console.log("Direction: " + this.parent.direction.x);
-
-	
-
 		
 	}
 
