@@ -132,11 +132,12 @@ export default class GameLevel extends Scene {
                     {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
-                        this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
+                        // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
                             if (node === this.arrows) {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
+                                (<AnimatedSprite>enemy.owner).animation.playIfNotAlready("TAKING_DAMAGE", true);
                                 enemy.enemyHealth = enemy.enemyHealth - 1;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
