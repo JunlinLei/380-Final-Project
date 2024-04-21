@@ -159,6 +159,10 @@ export default class GameLevel extends Scene {
                 case Helles_Events.MONSTER_ATTACK:
                     {
 
+
+                        // let owner = event.data.get("node");
+                        // console.log(owner)
+                        // owner.animation.play("ATTACK");
                         let position: Vec2 = event.data.get("position");
                         let direction: Vec2 = event.data.get("direction")
                         let enemyNode = event.data.get("node")
@@ -192,11 +196,48 @@ export default class GameLevel extends Scene {
                     break;
                 case Helles_Events.PROJ_HIT_PLAYER:
                     {
+                        console.log("PROJECTILE HIT PLAYER EVENT!!!")
+
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
-                        
-                        other.destroy();
-                    }
+                        // console.log("node is player?: " +( node === this.player));
+                            //   console.log("other: " + other)
+                        // console.log("other is player?: " +( other === this.player));
+
+                        if (node === this.player){
+                            // console.log("if")
+
+                            if (!this.playerinvincible) {
+                                // this.player.animation.play("HIT");
+
+                                this.playerHealth = this.playerHealth - 1;
+                                this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
+                                this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
+                                if (this.playerHealth <= 0) {
+                                    node.destroy();
+                                }
+                                this.playerinvincible = true;
+                                this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
+                            }
+                        }
+                        else {
+                            console.log("else")
+                            this.player.animation.playIfNotAlready("HIT");
+
+                            if (!this.playerinvincible) {
+                                // this.player.animation.play("HIT");
+
+                                this.playerHealth = this.playerHealth - 1;
+                                this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
+                                this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
+                                if (this.playerHealth <= 0) {
+                                    other.destroy();
+                                }
+                                this.playerinvincible = true;
+                                this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
+                            }
+                        }
+                        }
                     break;
                 case Helles_Events.PLAYER_ENTERED_LEVEL_END:
                     {
@@ -370,6 +411,8 @@ export default class GameLevel extends Scene {
         this.viewport.follow(this.player);
 
         this.player.setTrigger("enemy", Helles_Events.PLAYER_DAMAGE, null);
+        this.player.setTrigger("proj", Helles_Events.PROJ_HIT_PLAYER, null);
+
         //this.player.collisionShape.overlaps()
     }
 
