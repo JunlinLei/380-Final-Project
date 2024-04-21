@@ -22,7 +22,7 @@
       },
 
       {
-        "name": "EYE_BEAM",
+        "name": "ATTACK",
         "repeat": false,
         "frames": [
           { "index": 3, "duration": 6 },
