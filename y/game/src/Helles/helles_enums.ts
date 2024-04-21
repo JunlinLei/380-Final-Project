@@ -4,11 +4,13 @@ export enum Helles_Events {
     // PLAYER_HIT_SWITCH = "PlayerHitSwitch",
     PLAYER_ATTACK = "PlayerAttack",
     ARROW_HIT_ENEMT ="ArrowHitEnemy",
+    PROJ_HIT_PLAYER = "ProjHitPlayer",
     PLAYER_ENTERED_LEVEL_END = "PlayerEnteredLevelEnd",
     LEVEL_START = "LevelStart",
     LEVEL_END = "LevelEnd",
     PLAYER_KILLED = "PlayerKilled",
-    PLAYER_DAMAGE = "PlayerDamage"
+    PLAYER_DAMAGE = "PlayerDamage",
+    MONSTER_ATTACK = "MonsterAttack"
 }
 
 
@@ -18,6 +20,7 @@ export enum BattlerEvent {
     BATTLER_CHANGE = "BATTLER_CHANGE",
     CONSUME = "CONSUME",
     HIT = "HIT",
+    TEST = "test"
 }
 
 export enum ItemEvent {

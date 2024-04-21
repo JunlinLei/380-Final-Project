@@ -21,14 +21,15 @@ export default class Walk extends OnGround {
         if(dir.isZero()){
             this.finished(PlayerStates.IDLE);
         }
-        if(Input.isJustPressed("attack"))
+        if(Input.isJustPressed("attack") && this.parent.attackTimer.isStopped())
 			{
 				this.finished(PlayerStates.ATTACK);
-				
+				this.parent.attackTimer.start();
 			}
-
+        
+            
         this.parent.velocity.x = dir.x * this.parent.speed
-
+        // this.parent.velocity.y = -600
 		this.owner.move(this.parent.velocity.scaled(deltaT));
     }
 

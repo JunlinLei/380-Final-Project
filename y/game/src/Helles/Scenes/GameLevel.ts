@@ -16,9 +16,10 @@ import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import ArrowController from "../Arrow/ArrowController";
 import EnemyController from "../Enemies/EnemyController";
+import EnemyProjController from "../EnemyProj/EnemyProjController";
 // import BalloonController from "../Enemies/BalloonController";
 // import { HW5_Color } from "../hw5_color";
-import { Helles_Events, BattlerEvent } from "../helles_enums";
+import { Helles_Events,BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
@@ -37,16 +38,24 @@ export default class GameLevel extends Scene {
     private playerinvicibleTime: number = 0;
     private playerinvicibleMAXTIME: number = 2;
     private playerinvicibleEndTime: number = 0;
-
-
-    protected arrows: Sprite;
-
-    private npc: AnimatedSprite;
     private emenyHealth: number = 5;
+    private npc: AnimatedSprite;
     //Labels for the gui
     private healthLabel: Label;
     private healthLabelBrd: Label;
     private healthLabelInnerBrd:Label;
+    protected arrows : Sprite;
+    protected enemyProj : Sprite;
+    protected projTimer : Timer;
+
+    // Stuff to end the level and go to the next level
+    protected levelEndArea: Rect;
+    protected nextLevel: new (...args: any) => GameLevel;
+    protected levelEndTimer: Timer;
+    protected levelEndLabel: Label;
+
+    protected levelTransitionScreen: Rect;
+    protected levelTransitionTimer: Timer;
 
     //we first start scene 
     startScene(): void {
@@ -57,7 +66,8 @@ export default class GameLevel extends Scene {
         this.initViewport();
         this.initPlayer()
         this.initializeNPCs();
-        this.subscribeToEvents();
+        this.subscribeToEvents(); 
+        this.addUI();
         // this.initArrows()
 
         this.initialUI();
@@ -69,6 +79,24 @@ export default class GameLevel extends Scene {
 
         })
 
+        //timer for each proj fire 
+        this.projTimer = new Timer(1500); 
+
+        this.levelTransitionTimer = new Timer(500);
+        this.levelEndTimer = new Timer(3000, () => {
+            // After the level end timer ends, fade to black and then go to the next scene
+            this.levelTransitionScreen.tweens.play("fadeIn");
+        });
+	/* ##### DO NOT MODIFY ##### */
+		// Create a background layer
+		// this.addLayer("background", 0);
+
+		// Add in the background image
+
+
+		// Create a layer to serve as our main game - Feel free to use this for your own assets
+		// It is given a depth of 5 to be above our background
+		// this.addLayer("primary", 5);
 
         //disable player movement first 
         // Input.disableInput();
@@ -85,10 +113,121 @@ export default class GameLevel extends Scene {
             switch (event.type) {
                 case Helles_Events.PLAYER_ATTACK:
                     {
-                        let position = event.data.get("position");
-                        let dirction = event.data.get("direction")
+                            
+                                let position = event.data.get("position");
+                                let dirction = event.data.get("direction")
+                                
+                                this.spawnArrow(position,dirction);
 
-                        this.spawnArrow(position, dirction);
+                            
+                    }
+                    break;
+
+                case BattlerEvent.HIT:
+                    {
+                        let node = this.sceneGraph.getNode(event.data.get("node"));
+                        let other = this.sceneGraph.getNode(event.data.get("other"));
+                      
+                        if(node != undefined && other != undefined)
+                            {
+                                if(node === this.arrows)
+                                    {
+                                        console.log("hit event");
+                                        let arrow = (<ArrowController>node._ai);
+                                        arrow.direction;
+                                        node.destroy();
+                                        other.destroy();
+                                        // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
+
+                                    }
+                                else
+                                {
+                                    node.destroy();
+                                    other.destroy();
+                                }
+                            }
+                        
+                       
+                    }
+                    break;
+                
+                case Helles_Events.MONSTER_ATTACK: 
+                {
+                    
+                    let position : Vec2= event.data.get("position");
+                    let direction : Vec2= event.data.get("direction")
+                    let enemyNode = event.data.get("node")
+                    
+                    let enemy = (<EnemyController>enemyNode._ai)
+                    let shotPosition = event.data.get("shotPosition");
+
+                    let firstProj : Vec2 = new Vec2 (0,0);
+                    let secondProj : Vec2 = new Vec2 (0,0);
+                    let thirdProj : Vec2 = new Vec2 (0,0);
+
+                    if(shotPosition === "sameLevelRight" || shotPosition === "upperRight")
+                        {
+                            firstProj.set(position.x+16, position.y-16)
+                            secondProj.set(position.x+16, position.y -32)
+                            thirdProj.set(position.x +16, position.y+16)
+                        }
+                    if(shotPosition === "sameLevelLeft" || shotPosition === "upperLeft")
+                            {
+                                firstProj.set(position.x-16, position.y-16)
+                                secondProj.set(position.x-16, position.y -32)
+                                thirdProj.set(position.x -16, position.y+16)
+                            }
+
+                   if(enemy.projTimer.isStopped())
+                    {
+                        this.spawnProj(firstProj, direction);
+                        this.spawnProj(secondProj, direction);
+                        this.spawnProj(thirdProj, direction);
+                        enemy.projTimer.start();
+                    }
+                    
+                }
+                break;
+                case Helles_Events.PROJ_HIT_PLAYER: 
+                {
+                    let node = this.sceneGraph.getNode(event.data.get("node"));
+                    let other = this.sceneGraph.getNode(event.data.get("other"));
+                    other.destroy();
+                }
+                break;
+                case Helles_Events.PLAYER_ENTERED_LEVEL_END:
+                    {
+                        console.log("*EVENT: * PLAYER_ENTERED_LEVEL_END **");
+
+                    // TODO: check the boss miniboss has been defeated 
+                    if(!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()){
+                        // The player has reached the end of the level
+                       console.log("** reached end of level **");
+                        this.levelEndTimer.start();
+                        this.levelEndLabel.tweens.play("slideIn");
+                        this.emitter.fireEvent(Helles_Events.LEVEL_END);
+                    }
+                    break;
+                }
+                case Helles_Events.LEVEL_END:
+                    {
+                        // Go to the next level
+                        if(this.nextLevel){
+                            let sceneOptions = {
+                                physics: {
+                                    groupNames: ["ground", "player", "arrow","enemy", "proj"],
+                                    collisions:
+                                    [
+                                        [0, 1, 1, 1, 1],
+                                        [1, 0, 0, 1, 1],
+                                        [1, 0, 0, 1, 0],
+                                        [1, 1, 1, 1, 0],
+                                        [1, 1, 0, 0, 0]
+                                    ]
+                                }
+                            }
+                            this.sceneManager.changeToScene(this.nextLevel, {}, sceneOptions);
+                        }
                     }
                     break;
 
@@ -153,10 +292,12 @@ export default class GameLevel extends Scene {
     protected initLayers(): void {
 
         // UI layer 
-        this.addUILayer("UI")
+        this.addUILayer("UI");
 
         //Layer for player and enemies 
-        this.addLayer("primary", 1)
+        this.addLayer("primary", 1);
+        this.addLayer("terrain",5);
+        this.addLayer("background",0);
     }
 
     //init viewport 
@@ -172,32 +313,52 @@ export default class GameLevel extends Scene {
             Helles_Events.LEVEL_END,
             Helles_Events.PLAYER_ATTACK,
             BattlerEvent.HIT,
-            Helles_Events.PLAYER_DAMAGE
+            Helles_Events.PLAYER_DAMAGE,
+            Helles_Events.MONSTER_ATTACK,
+            Helles_Events.PROJ_HIT_PLAYER,
+            Helles_Events.PLAYER_ENTERED_LEVEL_END,
+            Helles_Events.LEVEL_END
         ])
     }
 
     // UI for the games 
     protected addUI() {
         //all in game UI goes here 
+        this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, "UI", {position: new Vec2(-300, 200), text: "Level Complete"});
     }
 
     protected initializeNPCs(): void {
         console.log("initializing NPCs")
-        let red = this.load.getObject("lurker");
-
-        for (let enemyPos of red.enemies) {
+        let enemyCoords = this.load.getObject("enemyCoords");
+        // console.log(enemyCoords);
+      
+        for (let enemyPos of enemyCoords.enemies) {
             // Create the NPC with the 'RedEnemy' spritesheet
             this.npc = this.add.animatedSprite("lurker", "primary");
+            console.log(this.npc);
             this.npc.position.set(enemyPos[0], enemyPos[1]);
             this.npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             this.npc.animation.play("IDLE");
             this.npc.setTrigger("arrow", BattlerEvent.HIT, null);
             this.npc.setGroup("enemy");
 
-            // send player position
-            this.npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.emenyHealth });// 
-            // Additional setup...
-        }
+             // send player position
+             this.npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.emenyHealth });// 
+             // Additional setup...
+        }   
+
+        // initialize mini boss
+        let boss = this.add.animatedSprite("moss", "primary");
+        console.log("boss data: ");
+        console.log(boss);
+        boss.position.set(enemyCoords.miniBoss[0][0],enemyCoords.miniBoss[0][1]);        
+        boss.addPhysics(new AABB(Vec2.ZERO, new Vec2(60, 60)), null, false);
+        boss.animation.play("IDLE");
+        boss.setTrigger("arrow", BattlerEvent.HIT, null);
+        boss.setGroup("enemy");
+        // TODO miniboss ai
+        boss.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});
+
     }
 
     //init player 
@@ -211,8 +372,8 @@ export default class GameLevel extends Scene {
             this.playerSpawn = Vec2.ZERO;
         }
         this.player.position.copy(this.playerSpawn);
-        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20, 22)))
-        this.player.colliderOffset.set(0, 2);
+        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20,22)))
+        this.player.colliderOffset.set(0,2);
         //add player AI here, not sure if necessary 
         this.player.addAI(PlayerController, { playerType: "platformer", tilemap: "Main", playerHealth: this.playerHealth });
 
@@ -222,11 +383,11 @@ export default class GameLevel extends Scene {
         this.player.setTrigger("enemy", Helles_Events.PLAYER_DAMAGE, null);
     }
 
-    protected initArrows(postion: Vec2, aiOptions: Record<string, any>): void {
-
+    protected initArrows(postion:Vec2, aiOptions: Record<string, any>):void{
+        
         this.arrows = this.add.sprite("arrow", "primary")
         this.arrows.position.set(postion.x, postion.y)
-        this.arrows.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
+        this.arrows.addPhysics(new AABB(Vec2.ZERO,new Vec2(16,8)));
         this.arrows.addAI(ArrowController, aiOptions);
         this.arrows.setGroup("arrow")
     }
@@ -251,6 +412,50 @@ export default class GameLevel extends Scene {
 
 
         // }
+    }
+
+
+    protected initProj(position : Vec2, aiOptions: Record<string,any>): void{
+
+       this.enemyProj = this.add.sprite("flame", "primary")
+       this.enemyProj.position.set(position.x,position.y)
+       this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16,8)));
+       this.enemyProj.addAI(EnemyProjController, aiOptions);
+       this.enemyProj.setGroup("proj")
+       this.enemyProj.setTrigger("player", Helles_Events.PROJ_HIT_PLAYER, null);
+
+    }
+
+    protected spawnProj(position : Vec2, dirction: Vec2):void{
+        let projPosition : Vec2 = new Vec2(0,0);
+        // console.log(dirction);
+        console.log(dirction)
+        if(dirction.x === 1 )
+            {   
+                // console.log("spawn right")
+                projPosition.set(position.x,position.y)
+                this.initProj(position,{direction : dirction})
+                // arrow.position.set(position.x + 32, position.y);
+                // console.log(velocity)
+                // arrow.move(velocity.scale(0.16))
+            }
+        else if (dirction.x === -1 )
+            {
+                // console.log("spawn left")
+
+                projPosition.set(position.x,position.y )
+                this.initProj(position, {direction : dirction })
+                // console.log(velocity)
+                // arrow.move(velocity.scale(0.16))
+            }
+    }
+
+    protected addLevelEnd(startingTile: Vec2, size: Vec2): void {
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, "primary", 
+        {position: startingTile.scale(32), size: size.scale(32)});
+        this.levelEndArea.addPhysics(undefined, undefined, false, true);
+        this.levelEndArea.setTrigger("player", Helles_Events.PLAYER_ENTERED_LEVEL_END, null);
+        this.levelEndArea.color = new Color(20, 200, 40, 1);
     }
 
     //respawn the player 

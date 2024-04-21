@@ -1,5 +1,9 @@
 import State from "../../Wolfie2D/DataTypes/State/State";
 import StateMachine from "../../Wolfie2D/DataTypes/State/StateMachine";
+<<<<<<< HEAD
+=======
+import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
+>>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import GameNode from "../../Wolfie2D/Nodes/GameNode";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
@@ -12,7 +16,12 @@ export default abstract class EnemyState extends State {
 	owner: GameNode;
 	parent: EnemyController;
 	gravity: number = 500;
+<<<<<<< HEAD
 
+=======
+	playerPosition:Vec2 = Vec2.ZERO;
+	shotPosition : string = null;
+>>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 	constructor(parent: StateMachine, owner: GameNode) {
 		super(parent);
 
@@ -20,8 +29,36 @@ export default abstract class EnemyState extends State {
 	}
 
 	handleInput(event: GameEvent): void {
+<<<<<<< HEAD
 	
 	}
+=======
+		if (event.type == Helles_Events.PLAYER_MOVE)
+			{
+				let position = event.data.get("position")
+				this.playerPosition = position;
+				let direction = event.data.get("direction")
+				this.parent.playerDirection = direction;
+			}
+	}
+
+	tileDistance() : number
+	{
+		//get player direction 
+	
+		//get distance between enemies and player 
+		
+		if(this.playerPosition.y - 32 <= this.owner.position.y)
+			{
+				let distanceX = Math.abs(this.playerPosition.x - this.owner.position.x)
+				let distanceY = Math.abs(this.playerPosition.y - this.owner.position.y)
+				let distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY)
+
+				return distance;
+			}
+	}
+
+>>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 	update(deltaT: number): void {
 		// console.log("Direction: " + this.parent.direction.x);
 		// turning when hitting a wall
@@ -42,6 +79,10 @@ export default abstract class EnemyState extends State {
 		}
 		this.parent.velocity.y += this.gravity * deltaT;
 
+<<<<<<< HEAD
+=======
+		
+>>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 }
 
 }

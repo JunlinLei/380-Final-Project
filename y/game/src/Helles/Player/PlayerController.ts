@@ -14,6 +14,7 @@ import Input from "../../Wolfie2D/Input/Input";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Attack from "./PlayerStates/Attack";
 import InAirAttack from "./PlayerStates/Inairattack";
+import Timer from "../../Wolfie2D/Timing/Timer";
 
 
 export enum PlayerType {
@@ -43,9 +44,7 @@ export default class PlayerController extends StateMachineAI{
     direction : string = "right";
     newposition : Vec2 = Vec2.ZERO;
     playerHealth: number = 1;
-
-
-    
+    attackTimer : Timer;
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
 
@@ -65,7 +64,8 @@ export default class PlayerController extends StateMachineAI{
 
     initializePlatformer(): void {
         this.speed = 400;
-    
+        this.attackTimer = new Timer(1200);
+        
         let idle = new Idle(this, this.owner);
         this.addState(PlayerStates.IDLE, idle);
         let walk = new Walk(this, this.owner);

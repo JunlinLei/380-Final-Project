@@ -9,7 +9,6 @@ import Walk from "./Walk";
 
 export default class Attack extends PlayerState {
     owner: AnimatedSprite; 
-    protected timer : Timer;
     onEnter(options: Record<string, any>): void {
 
     }
@@ -17,13 +16,13 @@ export default class Attack extends PlayerState {
     update(deltaT: number): void {
         super.update(deltaT);
 
-        this.owner.animation.playIfNotAlready("SHOOT_RIGHT",false);
-        
-        if(this.owner.animation.isPlaying("SHOOT_RIGHT") === false )
-            {              
-                this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} ) 
-                this.finished(PlayerStates.IDLE);
-            }
+                this.owner.animation.playIfNotAlready("SHOOT_RIGHT",false);
+                
+                if(this.owner.animation.isPlaying("SHOOT_RIGHT") === false )
+                    {              
+                        this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} ) 
+                        this.finished(PlayerStates.IDLE);
+                    }
             
         
     }
