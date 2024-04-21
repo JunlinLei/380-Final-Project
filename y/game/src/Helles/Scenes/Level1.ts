@@ -3,7 +3,7 @@ import Debug from "../../Wolfie2D/Debug/Debug";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
-
+import Level2 from "./Level2"
 export default class Level1 extends GameLevel{
 
     loadScene(): void {
@@ -18,9 +18,12 @@ export default class Level1 extends GameLevel{
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
+        // load the mini boss
+        this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
+        // enemy position data
+        this.load.object("enemyCoords", "helles_assets/data/enemies/enemyCoords.json") 
+        
 
-        // load the lurker (enemy) position data
-        this.load.object("lurker", "helles_assets/data/enemies/lurker.json") 
         
     }
 
@@ -36,15 +39,30 @@ export default class Level1 extends GameLevel{
 
         this.viewport.setBounds(0,0, 64*32,20*32);
 
-        this.playerSpawn = new Vec2(5*32, 14*32)
+        this.playerSpawn = new Vec2(5*32, 18*32)
 
         super.startScene();
 
+        this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
         
+        this.nextLevel = Level2;
+
+
     }
 
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
     }
+    
+    initLayers(): void{
+        super.initLayers();
+        let bg = this.add.sprite("trees", "background");
+
+		bg.scale.set(1.2, 1);
+
+		bg.position.copy(this.viewport.getCenter());
+    }
+
+    
 
 }

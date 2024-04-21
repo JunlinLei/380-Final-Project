@@ -30,6 +30,16 @@ export default class GameLevel extends Scene {
     protected respawnTimer: Timer;
     protected arrows : Sprite;
 
+        // Stuff to end the level and go to the next level
+        protected levelEndArea: Rect;
+        protected nextLevel: new (...args: any) => GameLevel;
+        protected levelEndTimer: Timer;
+        protected levelEndLabel: Label;
+
+        protected levelTransitionScreen: Rect;
+        protected levelTransitionTimer: Timer;
+
+
     //we first start scene 
     startScene(): void {
         
@@ -39,6 +49,8 @@ export default class GameLevel extends Scene {
         this.initPlayer();
         this.initializeNPCs();
         this.subscribeToEvents(); 
+        // this.addUI();
+
         // this.initArrows()
         this.respawnTimer = new Timer(1200, ()=>{
             //later on in this project, check life count, if life is zero go back to main menu 
@@ -47,6 +59,11 @@ export default class GameLevel extends Scene {
             this.player.unfreeze();
 
         })
+        this.levelTransitionTimer = new Timer(500);
+        this.levelEndTimer = new Timer(3000, () => {
+            // After the level end timer ends, fade to black and then go to the next scene
+            this.levelTransitionScreen.tweens.play("fadeIn");
+        });
 	/* ##### DO NOT MODIFY ##### */
 		// Create a background layer
 		// this.addLayer("background", 0);
@@ -91,6 +108,41 @@ export default class GameLevel extends Scene {
                             }
                         else(node)
                     }
+                case Helles_Events.PLAYER_ENTERED_LEVEL_END:
+                    {
+                        console.log("** reached end of level **");
+
+                    // TODO: check the boss miniboss has been defeated 
+                    if(!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()){
+                        // The player has reached the end of the level
+                       console.log("** reached end of level **");
+                        this.levelEndTimer.start();
+                        // this.levelEndLabel.tweens.play("slideIn");
+                        this.emitter.fireEvent(Helles_Events.LEVEL_END);
+                    }
+                    break;
+                }
+                case Helles_Events.LEVEL_END:
+                    {
+                        // Go to the next level
+                        if(this.nextLevel){
+                            let sceneOptions = {
+                                physics: {
+                                    groupNames: ["ground", "player", "arrow","enemy"],
+                                    collisions:
+                                    [
+                                        [0, 1, 1, 1],
+                                        [1, 0, 0, 1],
+                                        [1, 0, 0, 1],
+                                        [1, 1, 1, 0],
+                                    ]
+                                }
+                            }
+                            this.sceneManager.changeToScene(this.nextLevel, {}, sceneOptions);
+                        }
+                    }
+                    break;
+
                 
             }
            
@@ -102,18 +154,14 @@ export default class GameLevel extends Scene {
     protected initLayers(): void{
 
         // UI layer 
-        this.addUILayer("UI")
+        this.addUILayer("UI");
 
         //Layer for player and enemies 
-        this.addLayer("primary",5)
+        this.addLayer("primary",1);
 
         //add background layer
-        this.addLayer("background", 0);
-        let bg = this.add.sprite("trees", "background");
+        this.addLayer("background");
 
-		bg.scale.set(1.2, 1);
-
-		bg.position.copy(this.viewport.getCenter());
     }
 
     //init viewport 
@@ -128,23 +176,66 @@ export default class GameLevel extends Scene {
             Helles_Events.LEVEL_START,
             Helles_Events.LEVEL_END,
             Helles_Events.PLAYER_ATTACK,
-            BattlerEvent.HIT
+            BattlerEvent.HIT,
+            Helles_Events.PLAYER_ENTERED_LEVEL_END,
+            Helles_Events.LEVEL_END
         ])
     }
 
     // UI for the games 
     protected addUI(){
         //all in game UI goes here 
+              // End of level label (start off screen)
+              this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, "UI", {position: new Vec2(-300, 200), text: "Level Complete"});
+              this.levelEndLabel.size.set(1200, 60);
+              this.levelEndLabel.borderRadius = 0;
+              this.levelEndLabel.backgroundColor = new Color(34, 32, 52);
+              this.levelEndLabel.textColor = Color.WHITE;
+              this.levelEndLabel.fontSize = 48;
+              this.levelEndLabel.font = "PixelSimple";
+
+              this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, "UI", {position: new Vec2(300, 200), size: new Vec2(600, 400)});
+              this.levelTransitionScreen.color = new Color(34, 32, 52);
+              this.levelTransitionScreen.alpha = 1;
+      
+              this.levelTransitionScreen.tweens.add("fadeIn", {
+                  startDelay: 0,
+                  duration: 1000,
+                  effects: [
+                      {
+                          property: TweenableProperties.alpha,
+                          start: 0,
+                          end: 1,
+                          ease: EaseFunctionType.IN_OUT_QUAD
+                      }
+                  ],
+                  onEnd: Helles_Events.LEVEL_END
+              });
+      
+              this.levelTransitionScreen.tweens.add("fadeOut", {
+                  startDelay: 0,
+                  duration: 1000,
+                  effects: [
+                      {
+                          property: TweenableProperties.alpha,
+                          start: 1,
+                          end: 0,
+                          ease: EaseFunctionType.IN_OUT_QUAD
+                      }
+                  ],
+                  onEnd: Helles_Events.LEVEL_START
+              });
     }
 
     protected initializeNPCs(): void {
         console.log("initializing NPCs")
-        let red = this.load.getObject("lurker");
-    
-        for (let enemyPos of red.enemies) {
+        let enemyCoords = this.load.getObject("enemyCoords");
+        // console.log(enemyCoords);
+      
+        for (let enemyPos of enemyCoords.enemies) {
             // Create the NPC with the 'RedEnemy' spritesheet
             let npc = this.add.animatedSprite("lurker", "primary");
-            console.log(npc);
+            // console.log(npc);
             npc.position.set(enemyPos[0], enemyPos[1]);
             npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             npc.animation.play("IDLE");
@@ -155,6 +246,20 @@ export default class GameLevel extends Scene {
           npc.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});// 
             // Additional setup...
         }   
+
+        // initialize mini boss
+        let boss = this.add.animatedSprite("moss", "primary");
+        console.log("boss data: ");
+        console.log(boss);
+        
+        boss.position.set(enemyCoords.miniBoss[0][0],enemyCoords.miniBoss[0][1]);        
+        boss.addPhysics(new AABB(Vec2.ZERO, new Vec2(60, 60)), null, false);
+        boss.animation.play("IDLE");
+        boss.setTrigger("arrow", BattlerEvent.HIT, null);
+        boss.setGroup("enemy");
+        boss.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});
+
+
     }
 
     //init player 
@@ -210,9 +315,15 @@ export default class GameLevel extends Scene {
                 
             // }
     }
-
+    protected addLevelEnd(startingTile: Vec2, size: Vec2): void {
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, "primary", 
+        {position: startingTile.scale(32), size: size.scale(32)});
+        this.levelEndArea.addPhysics(undefined, undefined, false, true);
+        this.levelEndArea.setTrigger("player", Helles_Events.PLAYER_ENTERED_LEVEL_END, null);
+        this.levelEndArea.color = new Color(20, 200, 40, 1);
+    }
     //respawn the player 
-    protected respawnPlayer():void{
+    protected respawnPlayer():void {
         this.sceneManager.changeToScene(MainMenu,{});
        
          Input.enableInput();

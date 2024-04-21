@@ -30,16 +30,16 @@
         "name": "WALK_LEFT",
         "repeat": true,
         "frames": [
-          { "index": 4, "duration": 6 },
-          { "index": 5, "duration": 6 }
+          { "index": 4, "duration": 10 },
+          { "index": 5, "duration": 10 }
         ]
       },
       {
         "name": "WALK_RIGHT",
         "repeat": true,
         "frames": [
-          { "index": 6, "duration": 6 },
-          { "index": 7  , "duration": 6 }
+          { "index": 6, "duration": 10 },
+          { "index": 7  , "duration": 10 }
         ]
       },
       {
@@ -49,7 +49,8 @@
           { "index": 8, "duration": 4 },
           { "index": 9, "duration": 4 },
           { "index": 10, "duration": 4 },
-          { "index": 11, "duration": 4 }        ]
+          { "index": 11, "duration": 4 } 
+        ]
       },
       {
         "name": "SHOOT_RIGHT",
