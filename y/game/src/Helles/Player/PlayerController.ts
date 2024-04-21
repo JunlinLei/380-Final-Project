@@ -37,7 +37,7 @@ export default class PlayerController extends StateMachineAI{
     protected owner: GameNode;
     velocity: Vec2 = Vec2.ZERO;
 	speed: number = 100;
-	MIN_SPEED: number = 1000;
+	MIN_SPEED: number = 400;
     // MAX_SPEED: number = 2000;
     tilemap: OrthogonalTilemap;
     direction : string = "right";
@@ -52,7 +52,7 @@ export default class PlayerController extends StateMachineAI{
 
     initializePlatformer(): void {
         
-        this.speed = 1000;
+        this.speed = 400;
     
         let idle = new Idle(this, this.owner);
         this.addState(PlayerStates.IDLE, idle);
