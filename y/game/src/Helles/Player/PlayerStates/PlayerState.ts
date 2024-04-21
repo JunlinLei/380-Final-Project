@@ -56,15 +56,6 @@ export default abstract class PlayerState extends State {
          
     }
 
-    // getAttackDirection(): Vec2{
-    //     let direction = Vec2.ZERO; 
-    //     if(Input.isPressed("attack"))
-    //         {
-    //             direction = this.getInputDirection();
-    //         }
-
-    //     return direction;
-    // }
 
     update(deltaT: number): void {
         // gravity 
@@ -73,7 +64,7 @@ export default abstract class PlayerState extends State {
 
 
         if(this.positionTimer.isStopped()){
-            this.emitter.fireEvent(Helles_Events.PLAYER_MOVE,{position: this.owner.position.clone()})
+            this.emitter.fireEvent(Helles_Events.PLAYER_MOVE,{position: this.owner.position.clone(), direction : this.parent.direction})
             // this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK,{position: this.owner.position.clone()})
             this.positionTimer.start();
         }
