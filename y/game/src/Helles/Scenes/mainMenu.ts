@@ -94,12 +94,13 @@ export default class MainMenu extends Scene{
             
             let sceneOptions = {
                 physics: {
-                    groupNames: ["ground", "player", "arrow"],
+                    groupNames: ["ground", "player", "arrow","enemy"],
                     collisions:
                     [
-                        [0, 1, 1],
-                        [1, 0, 0],
-                        [1, 0, 0]
+                        [0, 1, 1, 1],
+                        [1, 0, 0, 1],
+                        [1, 0, 0, 1],
+                        [1, 1, 1, 0],
                     ]
                 }
             }

@@ -21,6 +21,11 @@ export default class Walk extends OnGround {
         if(dir.isZero()){
             this.finished(PlayerStates.IDLE);
         }
+        if(Input.isJustPressed("attack"))
+			{
+				this.finished(PlayerStates.ATTACK);
+				
+			}
 
         this.parent.velocity.x = dir.x * this.parent.speed
 
