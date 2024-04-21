@@ -56,7 +56,7 @@ export default class PlayerController extends StateMachineAI{
         this.playerHealth = options.playerHealth;
 
         this.receiver.subscribe(Helles_Events.PLAYER_DAMAGE);
-    }
+        }
 
     activate(options: Record<string, any>): void {
         

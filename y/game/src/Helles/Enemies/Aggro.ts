@@ -1,16 +1,6 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2"
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-<<<<<<< HEAD
-import EnemyState from "./EnemyState";
-
-export default class Idle extends EnemyState {
-	
-	// doing nothing as of now
-	handleInput(event: GameEvent): void {
-		throw new Error("Method not implemented.");
-	}
-=======
 import { Helles_Events } from "../helles_enums";
 import { EnemyStates } from "./EnemyController";
 import EnemyState from "./EnemyState";
@@ -20,7 +10,6 @@ export default class Idle extends EnemyState {
 	// handleInput(event: GameEvent): void {
 	// 	throw new Error("Method not implemented.");
 	// }
->>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 	
 	onEnter(): void {
 		(<AnimatedSprite>this.owner).animation.play("IDLE", true);
@@ -29,11 +18,6 @@ export default class Idle extends EnemyState {
 	update(deltaT: number): void {
 		super.update(deltaT);
 
-<<<<<<< HEAD
-        this.parent.velocity.x = this.parent.direction.x * this.parent.speed;
-
-		this.owner.move(this.parent.velocity.scaled(deltaT));
-=======
 		
 
 		let distance = this.tileDistance();
@@ -80,7 +64,6 @@ export default class Idle extends EnemyState {
 		}
 
 
->>>>>>> bf393890a5fc5a3b340aae60491c76b817391442
 	}
 
 	onExit(): Record<string, any> {
