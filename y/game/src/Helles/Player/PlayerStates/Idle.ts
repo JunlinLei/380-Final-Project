@@ -25,10 +25,10 @@ export default class Idle extends OnGround {
 			}
 		}
 
-		if(Input.isJustPressed("attack"))
+		if(Input.isJustPressed("attack") && this.parent.attackTimer.isStopped())
 			{
 				this.finished(PlayerStates.ATTACK);
-				
+				this.parent.attackTimer.start();
 			}
 		
 		this.parent.velocity.x = 0;

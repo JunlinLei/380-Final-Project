@@ -11,7 +11,7 @@ dist/*
 !dist/builtin/
 
 # Include the hw1 assets
-!dist/hw5_assets/
+!dist/helles_assets/
 
 
 

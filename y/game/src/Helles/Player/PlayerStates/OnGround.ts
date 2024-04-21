@@ -38,15 +38,6 @@ export default class OnGround extends PlayerState {
             this.finished('fall')
         }
 
-        // if(Input.isJustPressed("attack"))
-        //     {
-        //         this.finished("attack")
-        //         // this.owner.animation.playIfNotAlready("SHOOT_RIGHT",true);
-        //     }
-
-        // else if(Input.isJustPressed("attack")){
-        //     this.finished("attack")
-        // }
     }
 
     onExit(): Record<string, any> {

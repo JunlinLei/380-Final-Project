@@ -18,18 +18,16 @@ export default class InAirAttack extends InAir {
         super.update(deltaT);
         // let dir = this.getInputDirection();
         // this.parent.velocity.x += dir.x * this.parent.speed/3.5 - 0.3*this.parent.velocity.x;
-
         this.owner.move(this.parent.velocity.scaled(deltaT));
 
-        this.owner.animation.playIfNotAlready("SHOOT_RIGHT",false);
-        
-        if(this.owner.animation.isPlaying("SHOOT_RIGHT") === false )
-            {   
-                        
-                this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} ) 
-                this.finished(PlayerStates.IDLE);
-            }
-        
+                this.owner.animation.playIfNotAlready("SHOOT_RIGHT",false);
+                
+                if(this.owner.animation.isPlaying("SHOOT_RIGHT") === false )
+                    {   
+                                
+                        this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} )
+                        this.finished(PlayerStates.IDLE);
+                    }
     }
 
     onExit(): Record<string, any> {

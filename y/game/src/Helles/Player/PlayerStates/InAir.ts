@@ -18,9 +18,10 @@ export default abstract class InAir extends PlayerState {
 
         this.owner.move(this.parent.velocity.scaled(deltaT));
 
-        if(Input.isJustPressed("attack"))
+        if(Input.isJustPressed("attack") && this.parent.attackTimer.isStopped())
             {
                 this.finished(PlayerStates.INAIRATTACK);
+                this.parent.attackTimer.start();
             }
 
         if(this.owner.onGround){
