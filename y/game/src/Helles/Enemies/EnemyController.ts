@@ -1,10 +1,11 @@
 import GameNode from "../../Wolfie2D/Nodes/GameNode";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import StateMachineAI from "../../Wolfie2D/AI/StateMachineAI";
-import { Helles_Events } from "../helles_enums";
+import { Helles_Events,BattlerEvent } from "../helles_enums";
 import Idle from "./Idle";
 import Aggro from "./Aggro";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
+import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Timer from "../../Wolfie2D/Timing/Timer";
 
 
@@ -23,6 +24,8 @@ export default class EnemyController extends StateMachineAI {
 	ySpeed: number = 0;
 	gravity: number = 1000;
     projTimer : Timer;
+    enemyHealth: number;
+
 
     // used to determine walkable path for enemy
     tilemap: OrthogonalTilemap;
@@ -50,8 +53,7 @@ export default class EnemyController extends StateMachineAI {
         // default to idle state for beginning of level
 		this.initialize(EnemyStates.IDLE);
   
-
-
+        this.enemyHealth = options.enemyHealth;
 	}
 
 	changeState(stateName: string): void {
@@ -71,13 +73,13 @@ export default class EnemyController extends StateMachineAI {
         let playerStandTile = this.tilemap.getColRowAt(this.newPosition);
         let tileValue = this.tilemap.getTileAtRowCol(playerStandTile); 
         
-        // console.log("tile value: "+tileValue);
+        //console.log("tile value: "+tileValue);
 
        if (this.tilemap.getTileAtRowCol(playerStandTile) !== 14) {
             if (tileValue === 0) {
                 this.direction.x = -1;
             }
-            // console.log("next tile is not walkable");
+        //    console.log("next tile is not walkable");
             // this.tilemap.setTileAtRowCol(playerStandTile,9)
             // this.emitter.fireEvent(he.PLAYER_HIT_SWITCH)
         }

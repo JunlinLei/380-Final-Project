@@ -43,6 +43,7 @@ export default class PlayerController extends StateMachineAI{
     tilemap: OrthogonalTilemap;
     direction : string = "right";
     newposition : Vec2 = Vec2.ZERO;
+    playerHealth: number = 1;
     attackTimer : Timer;
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
@@ -50,6 +51,15 @@ export default class PlayerController extends StateMachineAI{
         this.initializePlatformer();
 
         this.tilemap = this.owner.getScene().getTilemap(options.tilemap) as OrthogonalTilemap;
+        
+        /**initial the health of the player */
+        this.playerHealth = options.playerHealth;
+
+        this.receiver.subscribe(Helles_Events.PLAYER_DAMAGE);
+        }
+
+    activate(options: Record<string, any>): void {
+        
     }
 
     initializePlatformer(): void {
@@ -89,11 +99,19 @@ export default class PlayerController extends StateMachineAI{
     }
 
     handleEvent(event: GameEvent): void {
-        
+        /**handle animation when the player get damage */
+        if(event.type === Helles_Events.PLAYER_DAMAGE){
+            //console.log("Player takes damage");
+            if(this.playerHealth<=0){
+                console.log("Player Dead");
+            }
+        }
     }
 
     update(deltaT: number): void {
         super.update(deltaT);
+
+        //console.log(this.playerHealth)
 
         // if(Input.isJustPressed("attack"))
         //     {

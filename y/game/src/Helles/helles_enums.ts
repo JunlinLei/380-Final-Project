@@ -9,6 +9,7 @@ export enum Helles_Events {
     LEVEL_START = "LevelStart",
     LEVEL_END = "LevelEnd",
     PLAYER_KILLED = "PlayerKilled",
+    PLAYER_DAMAGE = "PlayerDamage",
     MONSTER_ATTACK = "MonsterAttack"
 }
 
