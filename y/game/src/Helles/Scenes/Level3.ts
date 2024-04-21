@@ -3,15 +3,15 @@ import Debug from "../../Wolfie2D/Debug/Debug";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
-import Level3 from "./Level3"
+import Level1 from "./Level1"
 
-export default class Level2 extends GameLevel{
+export default class Level3 extends GameLevel{
 
     loadScene(): void {
 
         //load map and player
         //TODO new tile map
-        this.load.tilemap("level2","helles_assets/tilemaps/helles_level2.json");
+        this.load.tilemap("level3","helles_assets/tilemaps/helles_level3.json");
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png");
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
@@ -37,7 +37,7 @@ export default class Level2 extends GameLevel{
 
         
         //Add tile map 
-        this.add.tilemap("level2", new Vec2(2,2));
+        this.add.tilemap("level3", new Vec2(2,2));
 
         this.viewport.setBounds(0,0, 64*32,20*32);
 
@@ -49,7 +49,7 @@ export default class Level2 extends GameLevel{
        
        
         // TODO specify next level
-        this.nextLevel = Level3;
+        this.nextLevel = Level1;
 
 
     }

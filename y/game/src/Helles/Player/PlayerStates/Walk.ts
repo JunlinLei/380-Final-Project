@@ -24,7 +24,7 @@ export default class Walk extends OnGround {
         if(Input.isJustPressed("attack") && this.parent.attackTimer.isStopped())
 			{
 				this.finished(PlayerStates.ATTACK);
-				
+				this.parent.attackTimer.start();
 			}
         
             

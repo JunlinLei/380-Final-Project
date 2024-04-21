@@ -118,7 +118,7 @@ export default class GameLevel extends Scene{
                                         arrow.direction;
                                         node.destroy();
                                         other.destroy();
-                                        // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
+                                        this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
 
                                     }
                                 else
@@ -358,7 +358,6 @@ export default class GameLevel extends Scene{
     protected spawnProj(position : Vec2, dirction: Vec2):void{
         let projPosition : Vec2 = new Vec2(0,0);
         // console.log(dirction);
-        console.log(dirction)
         if(dirction.x === 1 )
             {   
                 // console.log("spawn right")
