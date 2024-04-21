@@ -29,6 +29,7 @@ export default class GameLevel extends Scene {
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
     protected arrows : Sprite;
+    protected mobsKilled: number;
 
         // Stuff to end the level and go to the next level
         protected levelEndArea: Rect;
@@ -49,7 +50,7 @@ export default class GameLevel extends Scene {
         this.initPlayer();
         this.initializeNPCs();
         this.subscribeToEvents(); 
-        // this.addUI();
+        this.addUI();
 
         // this.initArrows()
         this.respawnTimer = new Timer(1200, ()=>{
@@ -110,14 +111,14 @@ export default class GameLevel extends Scene {
                     }
                 case Helles_Events.PLAYER_ENTERED_LEVEL_END:
                     {
-                        console.log("** reached end of level **");
+                        console.log("*EVENT: * PLAYER_ENTERED_LEVEL_END **");
 
                     // TODO: check the boss miniboss has been defeated 
                     if(!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()){
                         // The player has reached the end of the level
                        console.log("** reached end of level **");
                         this.levelEndTimer.start();
-                        // this.levelEndLabel.tweens.play("slideIn");
+                        this.levelEndLabel.tweens.play("slideIn");
                         this.emitter.fireEvent(Helles_Events.LEVEL_END);
                     }
                     break;
@@ -155,12 +156,14 @@ export default class GameLevel extends Scene {
 
         // UI layer 
         this.addUILayer("UI");
-
+//
+this.addLayer("terrain",5);
+//
         //Layer for player and enemies 
         this.addLayer("primary",1);
 
         //add background layer
-        this.addLayer("background");
+        this.addLayer("background",0);
 
     }
 
@@ -184,47 +187,48 @@ export default class GameLevel extends Scene {
 
     // UI for the games 
     protected addUI(){
-        //all in game UI goes here 
+        /* all in game UI goes here */
+        // __________________________
               // End of level label (start off screen)
               this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, "UI", {position: new Vec2(-300, 200), text: "Level Complete"});
-              this.levelEndLabel.size.set(1200, 60);
-              this.levelEndLabel.borderRadius = 0;
-              this.levelEndLabel.backgroundColor = new Color(34, 32, 52);
-              this.levelEndLabel.textColor = Color.WHITE;
-              this.levelEndLabel.fontSize = 48;
-              this.levelEndLabel.font = "PixelSimple";
+            //   this.levelEndLabel.size.set(1200, 60);
+            //   this.levelEndLabel.borderRadius = 0;
+            //   this.levelEndLabel.backgroundColor = new Color(34, 32, 52);
+            //   this.levelEndLabel.textColor = Color.WHITE;
+            //   this.levelEndLabel.fontSize = 48;
+            //   this.levelEndLabel.font = "PixelSimple";
 
-              this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, "UI", {position: new Vec2(300, 200), size: new Vec2(600, 400)});
-              this.levelTransitionScreen.color = new Color(34, 32, 52);
-              this.levelTransitionScreen.alpha = 1;
+            //   this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, "UI", {position: new Vec2(300, 200), size: new Vec2(600, 400)});
+            //   this.levelTransitionScreen.color = new Color(34, 32, 52);
+            //   this.levelTransitionScreen.alpha = 1;
       
-              this.levelTransitionScreen.tweens.add("fadeIn", {
-                  startDelay: 0,
-                  duration: 1000,
-                  effects: [
-                      {
-                          property: TweenableProperties.alpha,
-                          start: 0,
-                          end: 1,
-                          ease: EaseFunctionType.IN_OUT_QUAD
-                      }
-                  ],
-                  onEnd: Helles_Events.LEVEL_END
-              });
+            //   this.levelTransitionScreen.tweens.add("fadeIn", {
+            //       startDelay: 0,
+            //       duration: 1000,
+            //       effects: [
+            //           {
+            //               property: TweenableProperties.alpha,
+            //               start: 0,
+            //               end: 1,
+            //               ease: EaseFunctionType.IN_OUT_QUAD
+            //           }
+            //       ],
+            //       onEnd: Helles_Events.LEVEL_END
+            //   });
       
-              this.levelTransitionScreen.tweens.add("fadeOut", {
-                  startDelay: 0,
-                  duration: 1000,
-                  effects: [
-                      {
-                          property: TweenableProperties.alpha,
-                          start: 1,
-                          end: 0,
-                          ease: EaseFunctionType.IN_OUT_QUAD
-                      }
-                  ],
-                  onEnd: Helles_Events.LEVEL_START
-              });
+            //   this.levelTransitionScreen.tweens.add("fadeOut", {
+            //       startDelay: 0,
+            //       duration: 1000,
+            //       effects: [
+            //           {
+            //               property: TweenableProperties.alpha,
+            //               start: 1,
+            //               end: 0,
+            //               ease: EaseFunctionType.IN_OUT_QUAD
+            //           }
+            //       ],
+            //       onEnd: Helles_Events.LEVEL_START
+            //   });
     }
 
     protected initializeNPCs(): void {
@@ -251,12 +255,12 @@ export default class GameLevel extends Scene {
         let boss = this.add.animatedSprite("moss", "primary");
         console.log("boss data: ");
         console.log(boss);
-        
         boss.position.set(enemyCoords.miniBoss[0][0],enemyCoords.miniBoss[0][1]);        
         boss.addPhysics(new AABB(Vec2.ZERO, new Vec2(60, 60)), null, false);
         boss.animation.play("IDLE");
         boss.setTrigger("arrow", BattlerEvent.HIT, null);
         boss.setGroup("enemy");
+        // TODO miniboss ai
         boss.addAI(EnemyController, {position: this.player.position, tilemap: "Main"});
 
 
