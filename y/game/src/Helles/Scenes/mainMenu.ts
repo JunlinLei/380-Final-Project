@@ -35,11 +35,9 @@ export default class MainMenu extends Scene{
         this.logoImage = this.add.sprite("logo","Main")
         this.logoImage.scale.set(0.25,0.25)
         //load logo here
-        let center = this.viewport.getCenter();
-        // let setlogo = <Sprite>this.add.sprite()        
         
         // let center = this.viewport.getCenter();
-        this.logoImage.position.set(center.x, center.y-220);
+        this.logoImage.position.set(size.x, size.y-220);
 
 
 

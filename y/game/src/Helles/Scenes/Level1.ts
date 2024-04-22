@@ -59,4 +59,6 @@ export default class Level1 extends GameLevel{
 		bg.position.copy(this.viewport.getCenter());
     }
 
+    
+
 }

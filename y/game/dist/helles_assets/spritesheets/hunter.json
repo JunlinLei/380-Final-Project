@@ -47,7 +47,7 @@
       },
       {
         "name": "HIT",
-        "repeat": false,
+        "repeat": true,
         "frames": [
           { "index": 11, "duration": 6 },
           { "index": 12, "duration": 8 },

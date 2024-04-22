@@ -4,11 +4,30 @@ import Sprite from "../../../Wolfie2D/Nodes/Sprites/Sprite";
 import MathUtils from "../../../Wolfie2D/Utils/MathUtils";
 import PlayerState from "./PlayerState";
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import GameEvent from "../../../Wolfie2D/Events/GameEvent";
+import { Helles_Events } from "../../helles_enums";
 export default class OnGround extends PlayerState {
 
     owner: AnimatedSprite; 
     onEnter(options: Record<string, any>): void {
         
+    }
+
+    // handleEvent(event: GameEvent): void {
+    //     if(event.type === Helles_Events.PLAYER_DAMAGE)
+    //         {
+    //             console.log("from walk state")
+    //             this.owner.animation.playIfNotAlready("HIT", false, "WALK_RIGHT")
+    //         }
+    // }
+    handleEvent(event: GameEvent): void {
+        
+        if(event.type == Helles_Events.PLAYER_DAMAGE)
+            {
+                console.log("from walk state")
+                this.owner.animation.playIfNotAlready("HIT", false, "WALK_RIGHT")
+            }
+    
     }
 
     update(deltaT: number): void {

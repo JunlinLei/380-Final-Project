@@ -1,16 +1,16 @@
 export enum Helles_Events {
     PLAYER_MOVE = "PlayerMove",
     PLAYER_JUMP = "PlayerJump",
-    // PLAYER_HIT_SWITCH = "PlayerHitSwitch",
     PLAYER_ATTACK = "PlayerAttack",
-    ARROW_HIT_ENEMT ="ArrowHitEnemy",
+    ARROW_HIT_ENEMY ="ArrowHitEnemy",
     PROJ_HIT_PLAYER = "ProjHitPlayer",
     PLAYER_ENTERED_LEVEL_END = "PlayerEnteredLevelEnd",
     LEVEL_START = "LevelStart",
     LEVEL_END = "LevelEnd",
     PLAYER_KILLED = "PlayerKilled",
     PLAYER_DAMAGE = "PlayerDamage",
-    MONSTER_ATTACK = "MonsterAttack"
+    MONSTER_ATTACK = "MonsterAttack",
+    DAMAGE_ANIMATION = "DamgeAnimation",
 }
 
 
@@ -19,8 +19,8 @@ export enum BattlerEvent {
     BATTLER_RESPAWN = "BATTLER_RESPAWN",
     BATTLER_CHANGE = "BATTLER_CHANGE",
     CONSUME = "CONSUME",
-    HIT = "HIT",
-    TEST = "test"
+    HIT = "HIT"
+
 }
 
 export enum ItemEvent {

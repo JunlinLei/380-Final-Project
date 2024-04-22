@@ -28,6 +28,7 @@ export default abstract class PlayerState extends State {
         
     }
 
+
     //keyboard input for direction 
     getInputDirection(): Vec2{
 

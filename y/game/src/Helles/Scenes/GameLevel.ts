@@ -32,14 +32,14 @@ export default class GameLevel extends Scene {
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
 
-    private playerHealth: number = 5;
-    private playerMaxHealth: number = 5;
+    private playerHealth: number = 3;
+    private playerMaxHealth: number = 3;
     private playerinvincible: boolean = false;
     private playerinvicibleTime: number = 0;
     private playerinvicibleMAXTIME: number = 2;
     private playerinvicibleEndTime: number = 0;
  
-    private enemyHealth: number = 5;
+    protected enemyHealth: number = 5;
     //Labels for the gui
     private healthLabel: Label;
     private healthLabelBrd: Label;
@@ -128,7 +128,7 @@ export default class GameLevel extends Scene {
                 * Event: The arrow hits an enemy
                 * Reduce the enemy's health and destory the arrow
                 */
-                case BattlerEvent.HIT:
+                case Helles_Events.ARROW_HIT_ENEMY:
                     {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
@@ -137,7 +137,7 @@ export default class GameLevel extends Scene {
                             if (node === this.arrows) {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
-                                (<AnimatedSprite>enemy.owner).animation.playIfNotAlready("TAKING_DAMAGE", true);
+                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
                                 enemy.enemyHealth = enemy.enemyHealth - 1;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
@@ -148,6 +148,8 @@ export default class GameLevel extends Scene {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
                                 enemy.enemyHealth = enemy.enemyHealth - 1;
+                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
+
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
                                     other.destroy();
@@ -156,14 +158,11 @@ export default class GameLevel extends Scene {
                         }
 
                     }
+                    this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                     break;
                 case Helles_Events.MONSTER_ATTACK:
                     {
 
-
-                        // let owner = event.data.get("node");
-                        // console.log(owner)
-                        // owner.animation.play("ATTACK");
                         let position: Vec2 = event.data.get("position");
                         let direction: Vec2 = event.data.get("direction")
                         let enemyNode = event.data.get("node")
@@ -187,6 +186,7 @@ export default class GameLevel extends Scene {
                         }
 
                         if (enemy.projTimer.isStopped()) {
+
                             this.spawnProj(firstProj, direction);
                             this.spawnProj(secondProj, direction);
                             this.spawnProj(thirdProj, direction);
@@ -199,47 +199,23 @@ export default class GameLevel extends Scene {
                     {
                         console.log("PROJECTILE HIT PLAYER EVENT!!!")
 
-                        let node = this.sceneGraph.getNode(event.data.get("node"));
-                        let other = this.sceneGraph.getNode(event.data.get("other"));
-                        // console.log("node is player?: " +( node === this.player));
-                            //   console.log("other: " + other)
-                        // console.log("other is player?: " +( other === this.player));
-
+                        let node = event.data.get("node");
+                        let other = event.data.get("other");
+                        console.log("node is player?: " +( node === this.player));
+                        // console.log("other: " + other)
+                        console.log("other is player?: " +( other === this.player));
                         if (node === this.player){
                             // console.log("if")
-
-                            if (!this.playerinvincible) {
-                                // this.player.animation.play("HIT");
-
-                                this.playerHealth = this.playerHealth - 1;
-                                this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
-                                this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                if (this.playerHealth <= 0) {
-                                    node.destroy();
-                                }
-                                this.playerinvincible = true;
-                                this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
+                            console.log("player")
+                           this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE,{node : node, other: other})
                             }
-                        }
+                        
                         else {
-                            console.log("else")
-                            this.player.animation.playIfNotAlready("HIT");
-
-                            if (!this.playerinvincible) {
-                                // this.player.animation.play("HIT");
-
-                                this.playerHealth = this.playerHealth - 1;
-                                this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
-                                this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                if (this.playerHealth <= 0) {
-                                    other.destroy();
-                                }
-                                this.playerinvincible = true;
-                                this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
-                            }
+                            this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE, {node:other, other:node})
                         }
-                        }
+                    }
                     break;
+                    
                 case Helles_Events.PLAYER_ENTERED_LEVEL_END:
                     {
                         console.log("*EVENT: * PLAYER_ENTERED_LEVEL_END **");
@@ -287,25 +263,28 @@ export default class GameLevel extends Scene {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
                         if (node === this.player){
+                            // let player = (<PlayerController> node._ai)
                             if (!this.playerinvincible) {
+                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, {playerHealth: this.playerHealth})
+                                // (<AnimatedSprite>player.owner).animation.playIfNotAlready("HIT",false,"IDLE_RIGHT")
                                 this.playerHealth = this.playerHealth - 1;
                                 this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
                                 this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                if (this.playerHealth <= 0) {
-                                    node.destroy();
-                                }
+                                
                                 this.playerinvincible = true;
                                 this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
                             }
                         }
                         else{
+                            // let player = (<PlayerController> other._ai)
+
                             if (!this.playerinvincible) {
+                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, {playerHealth: this.playerHealth})
+                                // (<AnimatedSprite>player.owner).animation.playIfNotAlready("HIT",false,"IDLE_RIGHT")
                                 this.playerHealth = this.playerHealth - 1;
                                 this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
                                 this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                if (this.playerHealth <= 0) {
-                                    other.destroy();
-                                }
+                                
                                 this.playerinvincible = true;
                                 this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
                             }
@@ -313,6 +292,11 @@ export default class GameLevel extends Scene {
 
                     }
                     break;
+
+                case Helles_Events.PLAYER_KILLED: 
+                {
+                    this.respawnPlayer();
+                }
             }
 
         }
@@ -343,12 +327,14 @@ export default class GameLevel extends Scene {
             Helles_Events.LEVEL_START,
             Helles_Events.LEVEL_END,
             Helles_Events.PLAYER_ATTACK,
-            BattlerEvent.HIT,
+            Helles_Events.ARROW_HIT_ENEMY,
             Helles_Events.PLAYER_DAMAGE,
             Helles_Events.MONSTER_ATTACK,
             Helles_Events.PROJ_HIT_PLAYER,
             Helles_Events.PLAYER_ENTERED_LEVEL_END,
-            Helles_Events.LEVEL_END
+            Helles_Events.LEVEL_END,
+            Helles_Events.DAMAGE_ANIMATION,
+            Helles_Events.PLAYER_KILLED
         ])
     }
 
@@ -369,7 +355,7 @@ export default class GameLevel extends Scene {
             npc.position.set(enemyPos[0], enemyPos[1]);
             npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             npc.animation.play("IDLE");
-            npc.setTrigger("arrow", BattlerEvent.HIT, null);
+            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
             npc.setGroup("enemy");
 
             // send player position
@@ -385,7 +371,7 @@ export default class GameLevel extends Scene {
         boss.position.set(enemyCoords.miniBoss[0][0], enemyCoords.miniBoss[0][1]);
         boss.addPhysics(new AABB(Vec2.ZERO, new Vec2(60, 60)), null, false);
         boss.animation.play("IDLE");
-        boss.setTrigger("arrow", BattlerEvent.HIT, null);
+        boss.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
         boss.setGroup("enemy");
         // TODO miniboss ai
         boss.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });
@@ -433,9 +419,7 @@ export default class GameLevel extends Scene {
         if (dirction === "right") {
             arrowPostion.set(position.x + 32, position.y)
             this.initArrows(position, { direction: 1 })
-            // arrow.position.set(position.x + 32, position.y);
-            // console.log(velocity)
-            // arrow.move(velocity.scale(0.16))
+            
         }
         else if (dirction === "left") {
             arrowPostion.set(position.x - 32, position.y)
@@ -462,23 +446,17 @@ export default class GameLevel extends Scene {
 
     protected spawnProj(position: Vec2, dirction: Vec2): void {
         let projPosition: Vec2 = new Vec2(0, 0);
-        // console.log(dirction);
-        //console.log(dirction)
+       
         if (dirction.x === 1) {
-            // console.log("spawn right")
             projPosition.set(position.x, position.y)
             this.initProj(position, { direction: dirction })
-            // arrow.position.set(position.x + 32, position.y);
-            // console.log(velocity)
-            // arrow.move(velocity.scale(0.16))
+            
         }
         else if (dirction.x === -1) {
-            // console.log("spawn left")
 
             projPosition.set(position.x, position.y)
             this.initProj(position, { direction: dirction })
-            // console.log(velocity)
-            // arrow.move(velocity.scale(0.16))
+           
         }
     }
 

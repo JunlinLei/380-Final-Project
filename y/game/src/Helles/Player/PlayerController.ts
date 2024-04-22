@@ -15,6 +15,9 @@ import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Attack from "./PlayerStates/Attack";
 import InAirAttack from "./PlayerStates/Inairattack";
 import Timer from "../../Wolfie2D/Timing/Timer";
+import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import TakeDamage from "./PlayerStates/TakeDamage";
+import Death from "./PlayerStates/Death";
 
 
 export enum PlayerType {
@@ -30,12 +33,14 @@ export enum PlayerStates {
     FALL = "fall",
 	PREVIOUS = "previous",
     ATTACK = "attack",
-    INAIRATTACK = "inairattack"
+    INAIRATTACK = "inairattack",
+    TAKEDAMAGE = "takedamage",
+    DEATH = "death"
 }
 
 export default class PlayerController extends StateMachineAI{
 
-    protected owner: GameNode;
+    owner: GameNode;
     velocity: Vec2 = Vec2.ZERO;
 	speed: number = 300;
 	MIN_SPEED: number = 300;
@@ -56,6 +61,7 @@ export default class PlayerController extends StateMachineAI{
         this.playerHealth = options.playerHealth;
 
         this.receiver.subscribe(Helles_Events.PLAYER_DAMAGE);
+        this.receiver.subscribe(Helles_Events.DAMAGE_ANIMATION)
         }
 
     activate(options: Record<string, any>): void {
@@ -82,6 +88,12 @@ export default class PlayerController extends StateMachineAI{
 
         let inairattack = new InAirAttack(this,this.owner);
         this.addState(PlayerStates.INAIRATTACK, inairattack)
+
+        let takedamage = new TakeDamage(this, this.owner);
+        this.addState(PlayerStates.TAKEDAMAGE, takedamage)
+
+        let death = new Death(this, this.owner);
+        this.addState(PlayerStates.DEATH, death)
         
         this.initialize(PlayerStates.IDLE);
     }
@@ -90,7 +102,7 @@ export default class PlayerController extends StateMachineAI{
 
         //if we jump or fall, push the states so we can go back to our current state later 
         //unless we're from jumping or falling 
-        if((state === PlayerStates.FALL || state ===PlayerStates.JUMP)&& !(this.stack.peek() instanceof InAir))
+        if((state === PlayerStates.FALL || state ===PlayerStates.JUMP || state === PlayerStates.IDLE)&& !(this.stack.peek() instanceof InAir))
             {
                 this.stack.push(this.stateMap.get(state));
             }
@@ -100,11 +112,22 @@ export default class PlayerController extends StateMachineAI{
 
     handleEvent(event: GameEvent): void {
         /**handle animation when the player get damage */
-        if(event.type === Helles_Events.PLAYER_DAMAGE){
-            //console.log("Player takes damage");
-            if(this.playerHealth<=0){
-                console.log("Player Dead");
+        if(event.type === Helles_Events.DAMAGE_ANIMATION){
+            let health = event.data.get("playerHealth")
+            console.log(health)
+
+            if(health -1 >0)
+                {
+
+                    this.changeState(PlayerStates.TAKEDAMAGE)           
+                }
+            else{
+                this.changeState(PlayerStates.DEATH)
+
             }
+        
+        
+
         }
     }
 

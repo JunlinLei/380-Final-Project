@@ -22,6 +22,7 @@ export default class Attack extends PlayerState {
                     {              
                         this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} ) 
                         this.finished(PlayerStates.IDLE);
+                        
                     }
             
         

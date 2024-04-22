@@ -1,11 +1,17 @@
+
+import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import Debug from "../../Wolfie2D/Debug/Debug";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
+import EnemyController from "../Enemies/EnemyController";
+import { BattlerEvent, Helles_Events } from "../helles_enums";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
-import Level3 from "./Level3"
+import Level1 from "./Level1"
+import Level3 from "./Level3";
 
 export default class Level2 extends GameLevel{
+
 
     loadScene(): void {
 
@@ -23,10 +29,10 @@ export default class Level2 extends GameLevel{
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
         // enemy position data
-        this.load.object("enemyCoords", "helles_assets/data/enemies/enemyCoords.json") 
-        
+        this.load.object("enemyCoords", "helles_assets/data/enemies/level2data.json") 
 
-        
+
+
     }
 
     unloadScene(): void {
@@ -35,7 +41,7 @@ export default class Level2 extends GameLevel{
 
     startScene(): void {
 
-        
+
         //Add tile map 
         this.add.tilemap("level2", new Vec2(2,2));
 
@@ -46,8 +52,8 @@ export default class Level2 extends GameLevel{
         super.startScene();
 
         this.addLevelEnd(new Vec2(60, 13), new Vec2(5, 5));
-       
-       
+
+
         // TODO specify next level
         this.nextLevel = Level3;
 
@@ -56,6 +62,27 @@ export default class Level2 extends GameLevel{
 
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
+    }
+
+    protected initializeNPCs(): void {
+        console.log("initializing NPCs")
+        let enemyCoords = this.load.getObject("enemyCoords");
+        // console.log(enemyCoords);
+
+        for (let enemyPos of enemyCoords.enemies) {
+            // Create the NPC with the 'RedEnemy' spritesheet
+            let npc = this.add.animatedSprite("moss", "primary");
+            npc.position.set(enemyPos[0], enemyPos[1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+            npc.animation.play("IDLE");
+            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+            npc.setGroup("enemy");
+
+            // send player position
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
+            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+            // Additional setup...
+        }
     }
 
 }

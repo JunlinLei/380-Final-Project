@@ -1,5 +1,7 @@
+import GameEvent from "../../../Wolfie2D/Events/GameEvent";
 import Input from "../../../Wolfie2D/Input/Input";
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import { Helles_Events } from "../../helles_enums";
 import { PlayerStates } from "../PlayerController";
 import OnGround from "./OnGround";
 
@@ -10,6 +12,23 @@ export default class Walk extends OnGround {
     onEnter(options: Record<string, any>): void {
         (this.parent.speed) = this.parent.MIN_SPEED;
     }
+    // handleEvent(event: GameEvent): void {
+    //     if(event.type === Helles_Events.PLAYER_DAMAGE)
+    //         {
+    //             console.log("from walk state")
+    //             this.owner.animation.playIfNotAlready("HIT", false, "WALK_RIGHT")
+    //         }
+    // }
+
+    handleInput(event: GameEvent): void {
+        
+        if(event.type == Helles_Events.PLAYER_DAMAGE)
+            {
+                console.log("from walk state")
+                this.owner.animation.playIfNotAlready("HIT", false, "WALK_RIGHT")
+            }
+    
+}
 
     update(deltaT: number): void {
         super.update(deltaT);

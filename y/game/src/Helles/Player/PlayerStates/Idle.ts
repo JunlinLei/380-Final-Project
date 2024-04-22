@@ -1,6 +1,8 @@
+import GameEvent from "../../../Wolfie2D/Events/GameEvent";
 import Input from "../../../Wolfie2D/Input/Input";
 import GameNode from "../../../Wolfie2D/Nodes/GameNode";
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import { Helles_Events } from "../../helles_enums";
 import { PlayerStates } from "../PlayerController";
 import OnGround from "./OnGround";
 
@@ -11,6 +13,17 @@ export default class Idle extends OnGround {
     onEnter(options: Record<string, any>): void {
         this.parent.speed = this.parent.MIN_SPEED;
     }
+
+	handleEvent(event: GameEvent): void {
+        
+		if(event.type == Helles_Events.PLAYER_DAMAGE)
+			{
+				console.log("from walk state")
+				this.owner.animation.play("HIT", false, "WALK_RIGHT")
+			}
+	
+}
+
     update(deltaT: number): void {
 		super.update(deltaT);
         this.owner.animation.playIfNotAlready("IDLE_RIGHT",true);
@@ -36,9 +49,5 @@ export default class Idle extends OnGround {
 		this.owner.move(this.parent.velocity.scaled(deltaT));
 	}
 
-    onExit(): Record<string, any> {
-        this.owner.animation.stop();
-        return {};
-    }
 
 }
