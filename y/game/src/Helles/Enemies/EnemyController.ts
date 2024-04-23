@@ -7,12 +7,14 @@ import Aggro from "./Aggro";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Timer from "../../Wolfie2D/Timing/Timer";
+import Die from "./Die";
 
 
 export enum EnemyStates {
 
 	IDLE = "idle",
-	AGGRO = "aggro"
+	AGGRO = "aggro",
+    DIE = "die"
 }
 
 export default class EnemyController extends StateMachineAI {
@@ -25,6 +27,7 @@ export default class EnemyController extends StateMachineAI {
 	gravity: number = 1000;
     projTimer : Timer;
     enemyHealth: number;
+    dyingTimer : Timer; 
 
     // used to determine walkable path for enemy
     tilemap: OrthogonalTilemap;
@@ -40,6 +43,7 @@ export default class EnemyController extends StateMachineAI {
         // subscribe to other events
        
         this.receiver.subscribe(Helles_Events.PLAYER_MOVE);
+        this.receiver.subscribe(Helles_Events.MONSTER_DYING);
 
         // add the idle state 
 		let idle = new Idle(this, owner);
@@ -47,6 +51,9 @@ export default class EnemyController extends StateMachineAI {
         // add the attacking state
 		let aggro = new Aggro(this, owner);
 		this.addState(EnemyStates.AGGRO, aggro);
+
+        let die = new Die(this, owner);
+        this.addState(EnemyStates.DIE, die);
 
 		this.direction = new Vec2(-1, 0);
         // default to idle state for beginning of level

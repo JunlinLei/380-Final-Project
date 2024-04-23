@@ -14,7 +14,8 @@ import MainMenu from "./Helles/Scenes/mainMenu";
             {name: "right", keys: ["d"]},
             {name: "jump", keys: ["w", "k"]},
             {name: "attack", keys: [ "j"]},
-            {name: "skill", keys: ["q"]}
+            {name: "skill", keys: ["q"]},
+            {name: "pick", keys: ["e"]}
         ],
         useWebGL: false, 
         showDebug: false  

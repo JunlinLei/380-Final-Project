@@ -50,6 +50,9 @@ export default class PlayerController extends StateMachineAI{
     newposition : Vec2 = Vec2.ZERO;
     playerHealth: number = 1;
     attackTimer : Timer;
+    newPosition: Vec2 = Vec2.ZERO;
+    key : boolean = false; 
+
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
 
@@ -142,6 +145,31 @@ export default class PlayerController extends StateMachineAI{
         //         this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction: this.currentState} )
         //     }
 
+        let enemyPosition = this.owner.position;
+
+        let yEnemyPosition  = enemyPosition.y ;
+        let xEnemyPosition = enemyPosition.x +32;  // handle left movement (-32)
+        
+        this.newPosition.x= xEnemyPosition;
+        this.newPosition.y = yEnemyPosition;
+
+        let playerStandTile = this.tilemap.getColRowAt(this.newPosition);
+        let tileValue = this.tilemap.getTileAtRowCol(playerStandTile); 
+        
+        // console.log("tile value: "+tileValue);
+        // console.log("stand tile: " + this.newPosition)
+        
+       if (this.key = true) {
+            if (tileValue === 16 || tileValue === 7) {
+                let topTile : Vec2 = new Vec2(playerStandTile.x,playerStandTile.y-1)
+                this.tilemap.setTileAtRowCol(playerStandTile, 0)
+                this.tilemap.setTileAtRowCol(topTile, 0)
+                // console.log("set tile")
+                // this.direction.x = -1;
+            }
+
+        // console.log(this.key);
+
         if(this.currentState instanceof Jump){
 			Debug.log("playerstate", "Player State: Jump");
 		} 
@@ -158,5 +186,6 @@ export default class PlayerController extends StateMachineAI{
             Debug.log("playerstate", "Player State: Attack");
         }
     }
+}
 }
 

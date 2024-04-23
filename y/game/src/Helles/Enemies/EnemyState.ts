@@ -2,6 +2,7 @@ import State from "../../Wolfie2D/DataTypes/State/State";
 import StateMachine from "../../Wolfie2D/DataTypes/State/StateMachine";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
+import CanvasNode from "../../Wolfie2D/Nodes/CanvasNode";
 import GameNode from "../../Wolfie2D/Nodes/GameNode";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
@@ -15,6 +16,7 @@ export default abstract class EnemyState extends State {
 	gravity: number = 500;
 	playerPosition:Vec2 = Vec2.ZERO;
 	shotPosition : string = null;
+	node: GameNode;
 	constructor(parent: StateMachine, owner: GameNode) {
 		super(parent);
 
@@ -29,6 +31,25 @@ export default abstract class EnemyState extends State {
 				let direction = event.data.get("direction")
 				this.parent.playerDirection = direction;
 			}
+
+		if(event.type == Helles_Events.MONSTER_DYING)
+			{
+				 let temp =event.data.get("eventData");
+				 this.node = temp;
+				 console.log(this.node)
+				 if(this.owner.id == this.node.id)
+					{
+						// this.parent.changeState(EnemyStates.DIE)
+						// this.node.destroy();
+
+					}
+		
+			}
+	}
+
+	getNode(): GameNode{
+		console.log(this.node);
+		return this.node;
 	}
 
 	tileDistance() : number
@@ -48,6 +69,7 @@ export default abstract class EnemyState extends State {
 	}
 
 	update(deltaT: number): void {
+		console.log(this.node);
 		// console.log("Direction: " + this.parent.direction.x);
 		// turning when hitting a wall
 		if (this.owner.onWall) {
@@ -67,7 +89,7 @@ export default abstract class EnemyState extends State {
 		}
 		this.parent.velocity.y += this.gravity * deltaT;
 
-		
+
 }
 
 }

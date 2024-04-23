@@ -2,7 +2,7 @@ import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 import Input from "../../Wolfie2D/Input/Input";
-import { TweenableProperties } from "../../Wolfie2D/Nodes/GameNode";
+import GameNode, { TweenableProperties } from "../../Wolfie2D/Nodes/GameNode";
 import Graphic from "../../Wolfie2D/Nodes/Graphic";
 import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 import Rect from "../../Wolfie2D/Nodes/Graphics/Rect";
@@ -32,11 +32,11 @@ export default class GameLevel extends Scene {
     protected player: AnimatedSprite;
     protected respawnTimer: Timer;
 
-    private playerHealth: number = 3;
-    private playerMaxHealth: number = 3;
+    private playerHealth: number = 10;
+    private playerMaxHealth: number = 10;
     private playerinvincible: boolean = false;
     private playerinvicibleTime: number = 0;
-    private playerinvicibleMAXTIME: number = 2;
+    private playerinvicibleMAXTIME: number = 1;
     private playerinvicibleEndTime: number = 0;
  
     protected enemyHealth: number = 5;
@@ -53,6 +53,7 @@ export default class GameLevel extends Scene {
     protected nextLevel: new (...args: any) => GameLevel;
     protected levelEndTimer: Timer;
     protected levelEndLabel: Label;
+    protected destoryNodeTimer : Timer;
 
     protected levelTransitionScreen: Rect;
     protected levelTransitionTimer: Timer;
@@ -87,6 +88,7 @@ export default class GameLevel extends Scene {
             // After the level end timer ends, fade to black and then go to the next scene
             this.levelTransitionScreen.tweens.play("fadeIn");
         });
+        this.destoryNodeTimer= new Timer(1000);
         /* ##### DO NOT MODIFY ##### */
         // Create a background layer
         // this.addLayer("background", 0);
@@ -137,28 +139,60 @@ export default class GameLevel extends Scene {
                             if (node === this.arrows) {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
-                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
-                                enemy.enemyHealth = enemy.enemyHealth - 1;
+                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
+                                enemy.enemyHealth = enemy.enemyHealth - 3;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    other.destroy();
+                                    this.spawnKey(enemy.owner.position);
+                                    // this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>other})
+                                    // (<AnimatedSprite>enemy.owner).animation.playIfNotAlready("DYING", false);
+                                    // if((<AnimatedSprite>enemy.owner).animation.isPlaying("DYING") === false)
+                                    //     {
+                                    //         other.destroy();
+                                    //     }
+                                    enemy.dyingTimer = new Timer(1000, ()=>{
+                                        other.destroy();
+                                    })
+
+                                    if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
+                                        // The player has reached the end of the level
+                                        enemy.dyingTimer.start();
+                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE")
+                                       
+                                    }
+                                            
                                 }
                             }
                             else {
-                                node.destroy();
-                                let enemy = (<EnemyController>other._ai);
-                                enemy.enemyHealth = enemy.enemyHealth - 1;
-                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
+                                other.destroy();
+                                let enemy = (<EnemyController>node._ai);
+                                enemy.enemyHealth = enemy.enemyHealth - 3;
+                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
 
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    other.destroy();
+                                    this.spawnKey(enemy.owner.position);
+                                    
+                                    enemy.dyingTimer = new Timer(1000, ()=>{
+                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
+                                    })
+
+                                    if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
+                                        // The player has reached the end of the level
+                                        console.log("** reached end of level **");
+                                        enemy.dyingTimer.start();
+                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
+                                        node.destroy();
+                                    }
+                                  
+                                    this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>node})
+                                    
                                 }
                             }
                         }
 
                     }
-                    this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
+                    // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                     break;
                 case Helles_Events.MONSTER_ATTACK:
                     {
@@ -292,7 +326,19 @@ export default class GameLevel extends Scene {
 
                     }
                     break;
-
+                
+                case Helles_Events.PLAYER_PICK_KEY: 
+                {
+                    let node = this.sceneGraph.getNode(event.data.get("node"));
+                    let other = this.sceneGraph.getNode(event.data.get("other"));
+                    if (node === this.player){
+                        console.log("key should be picked")
+                        let player = <PlayerController>this.player._ai
+                        player.key = true; 
+                        other.destroy();
+                    }
+                }
+                break;
                 case Helles_Events.PLAYER_KILLED: 
                 {
                     this.respawnPlayer();
@@ -334,7 +380,9 @@ export default class GameLevel extends Scene {
             Helles_Events.PLAYER_ENTERED_LEVEL_END,
             Helles_Events.LEVEL_END,
             Helles_Events.DAMAGE_ANIMATION,
-            Helles_Events.PLAYER_KILLED
+            Helles_Events.PLAYER_KILLED,
+            Helles_Events.PLAYER_PICK_KEY,
+            Helles_Events.MONSTER_DYING
         ])
     }
 
@@ -401,6 +449,18 @@ export default class GameLevel extends Scene {
         this.player.setTrigger("proj", Helles_Events.PROJ_HIT_PLAYER, null);
 
         //this.player.collisionShape.overlaps()
+    }
+
+    protected spawnKey(position: Vec2):void{
+        console.log(position);
+        let key = this.add.sprite("old_arrow","primary");
+        let keyPosition = position;
+        key.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
+        key.setGroup("key");
+        key.position.set(keyPosition.x,keyPosition.y)
+        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
+
+
     }
 
     protected initArrows(postion: Vec2, aiOptions: Record<string, any>): void {
@@ -517,5 +577,9 @@ export default class GameLevel extends Scene {
             this.playerinvincible = false;
         }
     }
+
+    // protected dyingTimer(timer:Timer, node: GameNode){
+    //     if(timer.isStopped)
+    // }
 
 }

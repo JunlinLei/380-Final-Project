@@ -33,7 +33,7 @@
         ]
       },
       {
-        "name": "DAMAGED",
+        "name": "TAKING_DAMAGE",
         "repeat": true,
         "frames": [
           { "index": 7, "duration": 8 },
