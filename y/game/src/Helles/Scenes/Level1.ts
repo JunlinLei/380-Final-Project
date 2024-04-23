@@ -9,7 +9,9 @@ export default class Level1 extends GameLevel{
     loadScene(): void {
 
         //load map and player
-        this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json")
+        // this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json")
+        this.load.tilemap("levell","helles_assets/tilemaps/Reverse_Forest.json")
+
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
@@ -34,10 +36,10 @@ export default class Level1 extends GameLevel{
 
     startScene(): void {
         //Add tile map 
-        this.add.tilemap("level1", new Vec2(2,2))
-        this.viewport.setBounds(0,0, 64*32,20*32);
+        this.add.tilemap("levell", new Vec2(2,2))
+        this.viewport.setBounds(0,0, 64*32,64*32);
 
-        this.playerSpawn = new Vec2(5*32, 14*32)
+        this.playerSpawn = new Vec2(5*32, 20*32)
 
         super.startScene();
 
@@ -53,11 +55,11 @@ export default class Level1 extends GameLevel{
 
     initLayers(): void{
         super.initLayers();
-        let bg = this.add.sprite("trees", "background");
+        // let bg = this.add.sprite("trees", "background");
 
-		bg.scale.set(1.2, 1);
+		// bg.scale.set(1.2, 1);
 
-		bg.position.copy(this.viewport.getCenter());
+		// bg.position.copy(this.viewport.getCenter());
     }
 
     

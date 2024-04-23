@@ -36,7 +36,7 @@ export default abstract class EnemyState extends State {
 			{
 				 let temp =event.data.get("eventData");
 				 this.node = temp;
-				 console.log(this.node)
+				//  console.log(this.node)
 				 if(this.owner.id == this.node.id)
 					{
 						// this.parent.changeState(EnemyStates.DIE)
@@ -69,7 +69,7 @@ export default abstract class EnemyState extends State {
 	}
 
 	update(deltaT: number): void {
-		console.log(this.node);
+		// console.log(this.node);
 		// console.log("Direction: " + this.parent.direction.x);
 		// turning when hitting a wall
 		if (this.owner.onWall) {

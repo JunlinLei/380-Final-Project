@@ -139,7 +139,18 @@ export default class GameLevel extends Scene {
                             if (node === this.arrows) {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
-                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
+                                enemy.damageTimer = new Timer(1000, ()=>{
+                                    (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                })
+
+                                if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                    // The player has reached the end of the level
+                                    enemy.damageTimer.start();
+                                    (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+                                   
+                                }                     
+                                // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
+                                
                                 enemy.enemyHealth = enemy.enemyHealth - 3;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
@@ -167,7 +178,17 @@ export default class GameLevel extends Scene {
                                 other.destroy();
                                 let enemy = (<EnemyController>node._ai);
                                 enemy.enemyHealth = enemy.enemyHealth - 3;
-                                (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
+                                enemy.damageTimer = new Timer(1000, ()=>{
+                                    (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                })
+
+                                if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                    // The player has reached the end of the level
+                                    enemy.damageTimer.start();
+                                    (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+                                   
+                                } 
+                                // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
 
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {

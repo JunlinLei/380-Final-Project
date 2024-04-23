@@ -28,6 +28,7 @@ export default class EnemyController extends StateMachineAI {
     projTimer : Timer;
     enemyHealth: number;
     dyingTimer : Timer; 
+    damageTimer : Timer;
 
     // used to determine walkable path for enemy
     tilemap: OrthogonalTilemap;
