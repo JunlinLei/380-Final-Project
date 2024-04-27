@@ -142,19 +142,24 @@ export default class GameLevel extends Scene {
                                 console.log((<PlayerController>this.player._ai).damage)
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
-                                enemy.damageTimer = new Timer(1000, ()=>{
-                                    (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
-                                })
+                                enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
 
-                                if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
-                                    // The player has reached the end of the level
-                                    enemy.damageTimer.start();
-                                    (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
-                                   
-                                }                     
+                                if(enemy.enemyHealth > 0)
+                                    {
+                                        enemy.damageTimer = new Timer(1000, ()=>{
+                                            (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                        })
+        
+                                        if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                            // The player has reached the end of the level
+                                            enemy.damageTimer.start();
+                                            (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+                                           
+                                        }                     
+                                    }
+
                                 // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
                                 
-                                enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
                                     enemy.dyingTimer = new Timer(1000, ()=>{
@@ -190,17 +195,23 @@ export default class GameLevel extends Scene {
                             else {
                                 other.destroy();
                                 let enemy = (<EnemyController>node._ai);
+                                console.log("player other damage")
+                                console.log((<PlayerController>this.player._ai).damage)
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
-                                enemy.damageTimer = new Timer(1000, ()=>{
-                                    (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
-                                })
+                                if(enemy.enemyHealth > 0)
+                                    {
 
-                                if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
-                                    // The player has reached the end of the level
-                                    enemy.damageTimer.start();
-                                    (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
-                                   
-                                } 
+                                        enemy.damageTimer = new Timer(1000, ()=>{
+                                            (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                        })
+        
+                                        if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                            // The player has reached the end of the level
+                                            enemy.damageTimer.start();
+                                            (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+                                           
+                                        } 
+                                    }
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
                                     this.spawnItem("old_arrow" ,enemy.owner.position);
@@ -320,15 +331,16 @@ export default class GameLevel extends Scene {
                         if (this.nextLevel) {
                             let sceneOptions = {
                                 physics: {
-                                    groupNames: ["ground", "player", "arrow", "enemy", "item"],
+                                    groupNames: ["ground", "player", "arrow","enemy", "proj","item"],
                                     collisions:
-                                        [
-                                            [0, 1, 1, 1, 1],
-                                            [1, 0, 0, 1, 1],
-                                            [1, 0, 0, 1, 0],
-                                            [1, 1, 1, 1, 0],
-                                            [1, 1, 0, 0, 0]
-                                        ]
+                                    [
+                                        [0, 1, 1, 1, 1, 1],
+                                        [1, 0, 0, 1, 1, 1],
+                                        [1, 0, 0, 1, 0, 0],
+                                        [1, 1, 1, 1, 0, 0],
+                                        [1, 1, 0, 0, 0, 0],
+                                        [1, 0, 0, 0 ,0, 0]
+                                    ]
                                 }
                             }
                             this.sceneManager.changeToScene(this.nextLevel, {}, sceneOptions);

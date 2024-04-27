@@ -71,6 +71,7 @@ export default class Level2 extends GameLevel{
 
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
+        
     }
 
 }
