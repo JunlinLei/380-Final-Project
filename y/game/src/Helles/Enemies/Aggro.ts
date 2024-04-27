@@ -51,6 +51,18 @@ export default class Idle extends EnemyState {
 					direction.x = -1
 					direction.y = 1
 				}
+			else if(this.playerPosition.x > this.owner.position.x )
+					{
+						this.shotPosition = "sameLevelRight";
+						direction.x = 1
+						direction.y = 0
+					}
+			else if(this.playerPosition.x < this.owner.position.x )
+					{
+						this.shotPosition = "sameLevelLeft";
+						direction.x = -1
+						direction.y = 0
+					}
 			this.emitter.fireEvent(Helles_Events.MONSTER_ATTACK, {position: this.owner.position, direction: direction, shotPosition : this.shotPosition, node: this.owner} ) 
 
 		}

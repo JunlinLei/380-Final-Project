@@ -16,7 +16,11 @@ export default class Level1 extends GameLevel{
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
-        this.load.image("flame", "helles_assets/spritesheets/blue_fireball.png")
+        this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
+        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
+        this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+
         // TODO add another projectile image with high contrast
         
         //add other monster and music later on 
@@ -40,11 +44,11 @@ export default class Level1 extends GameLevel{
         this.add.tilemap("levell", new Vec2(2,2))
         
         // kyles map 
-        this.viewport.setBounds(0,0, 64*32,64*32);
+        this.viewport.setBounds(0,0, 64*32,20*32);
         // this.viewport.setBounds(0,0, 64*16,20*16);
 
 
-        this.playerSpawn = new Vec2(1*32, 2*32)
+        this.playerSpawn = new Vec2(4*32, 5*32)
 
         super.startScene();
 

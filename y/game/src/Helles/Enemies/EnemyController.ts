@@ -25,19 +25,22 @@ export default class EnemyController extends StateMachineAI {
 	speed: number = 50;        //CHANGE THIS BACK TO SMALLER VALUE (50)
 	ySpeed: number = 0;
 	gravity: number = 1000;
-    projTimer : Timer;
     enemyHealth: number;
+    projTimer : Timer;
     dyingTimer : Timer; 
     damageTimer : Timer;
+    turnTimer : Timer;
+    enemyType : string; 
 
     // used to determine walkable path for enemy
     tilemap: OrthogonalTilemap;
-    newPosition: Vec2 = Vec2.ZERO;
+    botRightPosition: Vec2 = Vec2.ZERO;
+    botLeftPosition: Vec2 = Vec2.ZERO;
 
 	initializeAI(owner: GameNode, options: Record<string, any>){
 		this.owner = owner;
         this.projTimer = new Timer(1500); 
-
+        this.turnTimer = new Timer(1000)
         // get a reference to the tile map data
         this.tilemap = this.owner.getScene().getTilemap(options.tilemap) as OrthogonalTilemap;
         
@@ -61,6 +64,8 @@ export default class EnemyController extends StateMachineAI {
 		this.initialize(EnemyStates.IDLE);
   
         this.enemyHealth = options.enemyHealth;
+
+        this.enemyType = options.enemyType; 
 	}
 
 	changeState(stateName: string): void {
@@ -70,26 +75,48 @@ export default class EnemyController extends StateMachineAI {
 	update(deltaT: number): void {
 		super.update(deltaT);
         let enemyPosition = this.owner.position;
+        let yEnemyPosition ;
 
-        let yEnemyPosition  = enemyPosition.y + 32;
-        let xEnemyPosition = enemyPosition.x + 32;  // handle left movement (-32)
-        
-        this.newPosition.x= xEnemyPosition;
-        this.newPosition.y = yEnemyPosition;
-
-        let playerStandTile = this.tilemap.getColRowAt(this.newPosition);
-        let tileValue = this.tilemap.getTileAtRowCol(playerStandTile); 
-        
-        //console.log("tile value: "+tileValue);
-
-       if (this.tilemap.getTileAtRowCol(playerStandTile) !== 14) {
-            if (tileValue === 0) {
-                this.direction.x = -1;
+        if(this.enemyType === "lurker")
+            {
+                 yEnemyPosition  = enemyPosition.y + 32 ;
             }
-        //    console.log("next tile is not walkable");
-            // this.tilemap.setTileAtRowCol(playerStandTile,9)
-            // this.emitter.fireEvent(he.PLAYER_HIT_SWITCH)
+
+        else
+        {
+            yEnemyPosition  = enemyPosition.y + 64 ;
         }
+
+        
+        let xrEnemyPosition = enemyPosition.x + 32;  
+        let xlEnemyPosition = enemyPosition.x - 32; 
+
+        this.botRightPosition.x= xrEnemyPosition;
+        this.botRightPosition.y = yEnemyPosition;
+
+        this.botLeftPosition.x = xlEnemyPosition;
+        this.botLeftPosition.y = yEnemyPosition;
+
+        let rightStandTile = this.tilemap.getColRowAt(this.botRightPosition);
+        let leftStandTile = this.tilemap.getColRowAt(this.botLeftPosition)
+        let tileValueRight = this.tilemap.getTileAtRowCol(rightStandTile); 
+        let tileValueLeft = this.tilemap.getTileAtRowCol(leftStandTile); 
+        
+        // console.log("tile value: "+tileValueLeft);
+       
+            if ((tileValueRight === 0 || tileValueLeft === 0 ) && this.turnTimer.isStopped()) {
+               console.log("change direction")
+                if(this.direction.x == 1)
+                    {
+                        this.direction.x = - 1;
+                    }
+                else
+                {
+                    this.direction.x =  1;
+                }
+                this.turnTimer.start();
+            }
+        
 	}
 }
 

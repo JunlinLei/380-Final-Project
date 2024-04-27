@@ -54,15 +54,19 @@ export default abstract class EnemyState extends State {
 
 	tileDistance() : number
 	{
-		//get player direction 
+		let distanceX = Math.abs(this.playerPosition.x - this.owner.position.x)
+		let distanceY = Math.abs(this.playerPosition.y - this.owner.position.y)
+		let distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY)
 	
 		//get distance between enemies and player 
+		if((this.parent.enemyType === "miniBoss" || this.parent.enemyType === "wraith") && this.playerPosition.y - 96 <= this.owner.position.y)
+			{
+				return distance;
+			}
 		
 		if(this.playerPosition.y - 32 <= this.owner.position.y)
 			{
-				let distanceX = Math.abs(this.playerPosition.x - this.owner.position.x)
-				let distanceY = Math.abs(this.playerPosition.y - this.owner.position.y)
-				let distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY)
+				
 
 				return distance;
 			}

@@ -33,27 +33,12 @@ export default class Idle extends EnemyState {
 
 		let distance = this.tileDistance();
 		let tileDistance = Math.sqrt(32*32 +32*32);
-		// check if distance is between 10 tiles 
+		// check if distance is between 5 tiles 
 		// console.log(distance)
 		if(distance <= 5 * tileDistance )
 		{	
-			// this.parent.direction.x *= -1 aa
 			this.finished(EnemyStates.AGGRO)
-			//change velocity x of balloon 
-			// this.parent.velocity.x = this.parent.direction.x * this.parent.speed * 2;
-			// this.parent.velocity.y = 0;
-			// this.owner.move(this.parent.velocity.scaled(deltaT));
-			// console.log("less")
-
 		}
-		else{
-			// distance more than 10 tiles, reset velocity
-			// this.parent.velocity.x = this.parent.direction.x * this.parent.speed;
-			// this.parent.velocity.y = 0;
-			// this.owner.move(this.parent.velocity.scaled(deltaT));
-			// console.log("more")
-		}
-		
 	}
 
 	onExit(): Record<string, any> {

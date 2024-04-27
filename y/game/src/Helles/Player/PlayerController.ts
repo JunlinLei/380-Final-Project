@@ -52,6 +52,7 @@ export default class PlayerController extends StateMachineAI{
     attackTimer : Timer;
     newPosition: Vec2 = Vec2.ZERO;
     key : boolean = false; 
+    damage : number = 1;
 
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
@@ -73,7 +74,7 @@ export default class PlayerController extends StateMachineAI{
 
     initializePlatformer(): void {
         this.speed = 400;
-        this.attackTimer = new Timer(1200);
+        this.attackTimer = new Timer(1000);
         
         let idle = new Idle(this, this.owner);
         this.addState(PlayerStates.IDLE, idle);
@@ -159,7 +160,7 @@ export default class PlayerController extends StateMachineAI{
         // console.log("tile value: "+tileValue);
         // console.log("stand tile: " + this.newPosition)
         
-       if (this.key = true) {
+       if (this.key == true) {
             if (tileValue === 16 || tileValue === 7) {
                 let topTile : Vec2 = new Vec2(playerStandTile.x,playerStandTile.y-1)
                 this.tilemap.setTileAtRowCol(playerStandTile, 0)

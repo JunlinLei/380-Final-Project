@@ -44,6 +44,7 @@ export default class GameLevel extends Scene {
     private healthLabel: Label;
     private healthLabelBrd: Label;
     private healthLabelInnerBrd: Label;
+    private attackDamage : Label;
     protected arrows: Sprite;
     protected enemyProj: Sprite;
     protected projTimer: Timer;
@@ -65,13 +66,12 @@ export default class GameLevel extends Scene {
         //game level standard initializations 
         this.initLayers();
         this.initViewport();
-        this.initPlayer()
+        this.initPlayer();
         this.initializeNPCs();
         this.subscribeToEvents();
+        this.initialUI();
         this.addUI();
         // this.initArrows()
-
-        this.initialUI();
         this.respawnTimer = new Timer(1200, () => {
             //later on in this project, check life count, if life is zero go back to main menu 
             this.respawnPlayer();
@@ -134,9 +134,12 @@ export default class GameLevel extends Scene {
                     {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
+                        
                         // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
                             if (node === this.arrows) {
+                                console.log("player damage")
+                                console.log((<PlayerController>this.player._ai).damage)
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
                                 enemy.damageTimer = new Timer(1000, ()=>{
@@ -151,17 +154,27 @@ export default class GameLevel extends Scene {
                                 }                     
                                 // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
                                 
-                                enemy.enemyHealth = enemy.enemyHealth - 3;
+                                enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    this.spawnKey(enemy.owner.position);
-                                    // this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>other})
-                                    // (<AnimatedSprite>enemy.owner).animation.playIfNotAlready("DYING", false);
-                                    // if((<AnimatedSprite>enemy.owner).animation.isPlaying("DYING") === false)
-                                    //     {
-                                    //         other.destroy();
-                                    //     }
                                     enemy.dyingTimer = new Timer(1000, ()=>{
+
+                                        if(enemy.enemyType === "wraith")
+                                            {
+
+                                                this.spawnItem("damageUp",enemy.owner.position);
+                                            }
+
+                                        if (enemy.enemyType === "lurker")
+                                            {
+                                                this.spawnItem("healthPotion",enemy.owner.position);
+                                            }
+
+                                        if(enemy.enemyType === "miniBoss")
+                                            {
+                                                this.spawnItem("old_arrow", enemy.owner.position)
+                                            }
+
                                         other.destroy();
                                     })
 
@@ -177,7 +190,7 @@ export default class GameLevel extends Scene {
                             else {
                                 other.destroy();
                                 let enemy = (<EnemyController>node._ai);
-                                enemy.enemyHealth = enemy.enemyHealth - 3;
+                                enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
                                 enemy.damageTimer = new Timer(1000, ()=>{
                                     (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
                                 })
@@ -188,22 +201,18 @@ export default class GameLevel extends Scene {
                                     (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
                                    
                                 } 
-                                // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false,"IDLE");
-
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    this.spawnKey(enemy.owner.position);
+                                    this.spawnItem("old_arrow" ,enemy.owner.position);
                                     
                                     enemy.dyingTimer = new Timer(1000, ()=>{
-                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
-                                    })
+                                        node.destroy();                                    })
 
                                     if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
                                         // The player has reached the end of the level
                                         console.log("** reached end of level **");
                                         enemy.dyingTimer.start();
                                         (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
-                                        node.destroy();
                                     }
                                   
                                     this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>node})
@@ -220,31 +229,51 @@ export default class GameLevel extends Scene {
 
                         let position: Vec2 = event.data.get("position");
                         let direction: Vec2 = event.data.get("direction")
+                        let shotPosition = event.data.get("shotPosition");
                         let enemyNode = event.data.get("node")
 
                         let enemy = (<EnemyController>enemyNode._ai);
-                        let shotPosition = event.data.get("shotPosition");
+                        
+                        let enemyType = enemy.enemyType;
 
                         let firstProj: Vec2 = new Vec2(0, 0);
                         let secondProj: Vec2 = new Vec2(0, 0);
                         let thirdProj: Vec2 = new Vec2(0, 0);
 
-                        if (shotPosition === "sameLevelRight" || shotPosition === "upperRight") {
-                            firstProj.set(position.x + 16, position.y - 16)
-                            secondProj.set(position.x + 16, position.y - 32)
-                            thirdProj.set(position.x + 16, position.y + 16)
+                        if(enemyType === "wraith" || enemyType === "miniBoss")
+                            {
+                                if (shotPosition === "sameLevelRight" || shotPosition === "upperRight")
+                                    {
+                                        firstProj.set(position.x + 16, position.y - 16)
+                                    }
+                                    
+                                if (shotPosition === "sameLevelLeft" || shotPosition === "upperLeft")
+                                    {
+                                        firstProj.set(position.x - 16, position.y - 16)
+                                    }
+                            }
+
+                        else
+                        {
+
+                            if (shotPosition === "sameLevelRight" || shotPosition === "upperRight") {
+                                firstProj.set(position.x + 16, position.y - 16)
+                                secondProj.set(position.x + 16, position.y - 32)
+                                thirdProj.set(position.x + 16, position.y + 16)
+                            }
+                            if (shotPosition === "sameLevelLeft" || shotPosition === "upperLeft") {
+                                firstProj.set(position.x - 16, position.y - 16)
+                                secondProj.set(position.x - 16, position.y - 32)
+                                thirdProj.set(position.x - 16, position.y + 16)
+                            }
                         }
-                        if (shotPosition === "sameLevelLeft" || shotPosition === "upperLeft") {
-                            firstProj.set(position.x - 16, position.y - 16)
-                            secondProj.set(position.x - 16, position.y - 32)
-                            thirdProj.set(position.x - 16, position.y + 16)
-                        }
+
 
                         if (enemy.projTimer.isStopped()) {
 
-                            this.spawnProj(firstProj, direction);
-                            this.spawnProj(secondProj, direction);
-                            this.spawnProj(thirdProj, direction);
+                            this.spawnProj(firstProj, direction, enemyType);
+                            this.spawnProj(secondProj, direction, enemyType);
+                            this.spawnProj(thirdProj, direction, enemyType);
                             enemy.projTimer.start();
                         }
 
@@ -291,7 +320,7 @@ export default class GameLevel extends Scene {
                         if (this.nextLevel) {
                             let sceneOptions = {
                                 physics: {
-                                    groupNames: ["ground", "player", "arrow", "enemy", "proj"],
+                                    groupNames: ["ground", "player", "arrow", "enemy", "item"],
                                     collisions:
                                         [
                                             [0, 1, 1, 1, 1],
@@ -352,10 +381,36 @@ export default class GameLevel extends Scene {
                 {
                     let node = this.sceneGraph.getNode(event.data.get("node"));
                     let other = this.sceneGraph.getNode(event.data.get("other"));
+                    console.log((<Sprite>other).imageId)
                     if (node === this.player){
-                        console.log("key should be picked")
-                        let player = <PlayerController>this.player._ai
-                        player.key = true; 
+
+                        if((<Sprite>other).imageId === "healthPotion")
+                            {
+                                console.log("potion")
+                                if(this.playerHealth != this.playerMaxHealth)
+                                    {
+                                        this.playerHealth = this.playerHealth + 1;
+                                        this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
+                                        this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
+                                    }
+                            }
+                        
+                        if((<Sprite>other).imageId === "old_arrow")
+                            {
+
+                                console.log("key should be picked")
+                                let player = <PlayerController>this.player._ai
+                                player.key = true; 
+                            }
+                        
+                        if((<Sprite>other).imageId === "damageUp")
+                            {
+                                
+                                (<PlayerController>this.player._ai).damage += 1
+                                this.attackDamage.text = "attack : " + (<PlayerController>this.player._ai).damage
+                            }
+                            
+
                         other.destroy();
                     }
                 }
@@ -429,69 +484,44 @@ export default class GameLevel extends Scene {
             npc.setGroup("enemy");
 
             // send player position
-            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "lurker" });// 
             npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
         }
     }
+        if(data.wraiths)
+            {
+
+                let wraiths = data.wraiths;
+                for (let i = 0; i < data.wraiths.length;i ++) {
+                    let npc = this.add.animatedSprite("wraith", "primary");
+                    npc.position.set(wraiths[i][0], wraiths[i][1]);
+                    npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 48)), null, false);
+                    npc.animation.play("IDLE");
+                    npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+                    npc.setGroup("enemy");
         
-        let wraiths = data.wraiths;
-        for (let i = 0; i < data.wraiths.length;i ++) {
-            let npc = this.add.animatedSprite("wraith", "primary");
-            npc.position.set(wraiths[i][0], wraiths[i][1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
-            npc.animation.play("IDLE");
-            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
-            npc.setGroup("enemy");
-
-            // send player position
-            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
-            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+                    // send player position
+                    npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "wraith" });// 
+                    npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+                }
+            }
+        
+        if (data.miniBoss) {
+            let miniBoss = data.miniBoss;
+            for (let i = 0; i < data.miniBoss.length;i ++) {
+                let npc = this.add.animatedSprite("moss", "primary");
+                npc.position.set(miniBoss[i][0], miniBoss[i][1]);
+                npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(64, 64)), null, false);
+                npc.animation.play("IDLE");
+                npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+                npc.setGroup("enemy");
+                // send player position
+                npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "miniBoss" });// 
+                npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+            }
         }
         
-        //original naming from enemy data sheet
-        /*
-        for (let enemyPos of enemyCoords.enemies) {
-            // Create the NPC with the 'RedEnemy' spritesheet
-            let npc = this.add.animatedSprite("lurker", "primary");
-            npc.position.set(enemyPos[0], enemyPos[1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
-            npc.animation.play("IDLE");
-            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
-            npc.setGroup("enemy");
 
-            // send player position
-            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
-            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
-            // Additional setup...
-        }
-
-        for (let enemyPos of enemyCoords.wraiths) {
-            // Create the NPC with the 'RedEnemy' spritesheet
-            let npc = this.add.animatedSprite("wraith", "primary");
-            npc.position.set(enemyPos[0], enemyPos[1]);
-            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
-            npc.animation.play("IDLE");
-            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
-            npc.setGroup("enemy");
-
-            // send player position
-            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
-            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
-            // Additional setup...
-        }
-
-        // initialize mini boss
-        let boss = this.add.animatedSprite("moss", "primary");
-        console.log("boss data: ");
-        console.log(boss);
-        boss.position.set(enemyCoords.miniBoss[0][0], enemyCoords.miniBoss[0][1]);
-        boss.addPhysics(new AABB(Vec2.ZERO, new Vec2(60, 60)), null, false);
-        boss.animation.play("IDLE");
-        boss.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
-        boss.setGroup("enemy");
-        // TODO miniboss ai
-        boss.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });
-*/
     }
 
     //init player 
@@ -519,16 +549,29 @@ export default class GameLevel extends Scene {
         //this.player.collisionShape.overlaps()
     }
 
-    protected spawnKey(position: Vec2):void{
+    protected spawnItem(itemName: string , position: Vec2):void{
         console.log(position);
-        let key = this.add.sprite("old_arrow","primary");
+        let key = this.add.sprite(itemName,"primary");
         let keyPosition = position;
         key.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
-        key.setGroup("key");
+        key.setGroup("item");
         key.position.set(keyPosition.x,keyPosition.y)
         key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
 
     }
+
+    protected spawnPotion(position: Vec2):void{
+        console.log(position);
+        let key = this.add.sprite("healthPotion","primary");
+        let keyPosition = position;
+        key.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
+        key.setGroup("item");
+        key.position.set(keyPosition.x,keyPosition.y)
+        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
+
+    }
+
+    
 
     protected initArrows(postion: Vec2, aiOptions: Record<string, any>): void {
 
@@ -560,29 +603,39 @@ export default class GameLevel extends Scene {
     }
 
 
-    protected initProj(position: Vec2, aiOptions: Record<string, any>): void {
-
+    protected initProj(position: Vec2, enemyType:string, aiOptions: Record<string, any>): void {
+        console.log(enemyType)
+        if(enemyType === "lurker" )
+            {
+                this.enemyProj = this.add.sprite("flame", "primary")
+                this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
+            }
         
-        this.enemyProj = this.add.sprite("flame", "primary")
+        else if (enemyType === "wraith" || enemyType === "miniBoss")
+            {
+                this.enemyProj = this.add.sprite("fireball", "primary")
+                this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 16)));
+                this.enemyProj.scale.set(0.25,0.25)
+            }
+
         this.enemyProj.position.set(position.x, position.y)
-        this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
         this.enemyProj.addAI(EnemyProjController, aiOptions);
         this.enemyProj.setGroup("proj")
         this.enemyProj.setTrigger("player", Helles_Events.PROJ_HIT_PLAYER, null);
     }
 
-    protected spawnProj(position: Vec2, dirction: Vec2): void {
+    protected spawnProj(position: Vec2, dirction: Vec2, enemyType:string): void {
         let projPosition: Vec2 = new Vec2(0, 0);
        
         if (dirction.x === 1) {
             projPosition.set(position.x, position.y)
-            this.initProj(position, { direction: dirction })
+            this.initProj(projPosition, enemyType, { direction: dirction })
             
         }
         else if (dirction.x === -1) {
 
             projPosition.set(position.x, position.y)
-            this.initProj(position, { direction: dirction })
+            this.initProj(projPosition, enemyType, { direction: dirction })
            
         }
     }
@@ -629,6 +682,9 @@ export default class GameLevel extends Scene {
         this.healthLabelInnerBrd.borderColor = new Color(102, 51, 0);
         this.healthLabelInnerBrd.borderWidth = 4;
         this.healthLabelInnerBrd.size.set(200, 25);
+
+        this.attackDamage =<Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(70, 55), text: " attack : " + (<PlayerController>this.player._ai).damage});
+        this.attackDamage.textColor = Color.WHITE
     }
 
     /**

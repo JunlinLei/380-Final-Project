@@ -22,9 +22,12 @@ export default class Level2 extends GameLevel{
 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
-        this.load.image("arrow","helles_assets/spritesheets/arrow.png");
-        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
+        this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
+        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
+        this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
         // load background image for level 1
         // this.load.image("trees", "helles_assets/images/Reverse_forrest.jpg");

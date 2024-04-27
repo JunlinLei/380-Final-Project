@@ -15,9 +15,12 @@ export default class Level3 extends GameLevel{
         this.load.object("levelData", "helles_assets/data/enemies/level3data.json") 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
-        this.load.image("arrow","helles_assets/spritesheets/arrow.png");
-        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
+        this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
+        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
+        this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
