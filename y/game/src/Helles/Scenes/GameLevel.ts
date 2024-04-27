@@ -415,12 +415,59 @@ export default class GameLevel extends Scene {
 
     protected initializeNPCs(): void {
         console.log("initializing NPCs")
-        let enemyCoords = this.load.getObject("enemyCoords");
+        let data = this.load.getObject("levelData");
         // console.log(enemyCoords);
+        if(data.lurkers) {
+            let lurkers = data.lurkers;
+        
+        for (let i = 0; i < data.lurkers.length;i ++) {
+            let npc = this.add.animatedSprite("lurker", "primary");
+            npc.position.set(lurkers[i][0], lurkers[i][1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+            npc.animation.play("IDLE");
+            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+            npc.setGroup("enemy");
 
+            // send player position
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
+            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+        }
+    }
+        
+        let wraiths = data.wraiths;
+        for (let i = 0; i < data.wraiths.length;i ++) {
+            let npc = this.add.animatedSprite("wraith", "primary");
+            npc.position.set(wraiths[i][0], wraiths[i][1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+            npc.animation.play("IDLE");
+            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+            npc.setGroup("enemy");
+
+            // send player position
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
+            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+        }
+        
+        //original naming from enemy data sheet
+        /*
         for (let enemyPos of enemyCoords.enemies) {
             // Create the NPC with the 'RedEnemy' spritesheet
             let npc = this.add.animatedSprite("lurker", "primary");
+            npc.position.set(enemyPos[0], enemyPos[1]);
+            npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+            npc.animation.play("IDLE");
+            npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+            npc.setGroup("enemy");
+
+            // send player position
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });// 
+            npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+            // Additional setup...
+        }
+
+        for (let enemyPos of enemyCoords.wraiths) {
+            // Create the NPC with the 'RedEnemy' spritesheet
+            let npc = this.add.animatedSprite("wraith", "primary");
             npc.position.set(enemyPos[0], enemyPos[1]);
             npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
             npc.animation.play("IDLE");
@@ -444,7 +491,7 @@ export default class GameLevel extends Scene {
         boss.setGroup("enemy");
         // TODO miniboss ai
         boss.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth });
-
+*/
     }
 
     //init player 
@@ -481,7 +528,6 @@ export default class GameLevel extends Scene {
         key.position.set(keyPosition.x,keyPosition.y)
         key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
 
-
     }
 
     protected initArrows(postion: Vec2, aiOptions: Record<string, any>): void {
@@ -516,13 +562,13 @@ export default class GameLevel extends Scene {
 
     protected initProj(position: Vec2, aiOptions: Record<string, any>): void {
 
+        
         this.enemyProj = this.add.sprite("flame", "primary")
         this.enemyProj.position.set(position.x, position.y)
         this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
         this.enemyProj.addAI(EnemyProjController, aiOptions);
         this.enemyProj.setGroup("proj")
         this.enemyProj.setTrigger("player", Helles_Events.PROJ_HIT_PLAYER, null);
-
     }
 
     protected spawnProj(position: Vec2, dirction: Vec2): void {

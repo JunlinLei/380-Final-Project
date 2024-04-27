@@ -8,17 +8,20 @@ export default class Level1 extends GameLevel{
 
     loadScene(): void {
 
-        //load map and player
-        // this.load.tilemap("level1","helles_assets/tilemaps/hellesLevel1.json")
-        this.load.tilemap("levell","helles_assets/tilemaps/Reverse_Forest.json")
+        
+        /* level specific data */
+        this.load.tilemap("levell","helles_assets/tilemaps/helles_level1.json")
+        this.load.object("levelData", "helles_assets/data/enemies/level1data.json") 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
-        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("flame", "helles_assets/spritesheets/blue_fireball.png")
+        // TODO add another projectile image with high contrast
+        
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
-
+        this.load.spritesheet("wraith", "helles_assets/spritesheets/wraith.json")
         // load background image for level 1
         this.load.image("trees", "helles_assets/images/Reverse_forrest.png");
 
@@ -26,8 +29,6 @@ export default class Level1 extends GameLevel{
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
-        // enemy position data
-        this.load.object("enemyCoords", "helles_assets/data/enemies/enemyCoords.json") 
     }
 
     unloadScene(): void {
@@ -37,9 +38,13 @@ export default class Level1 extends GameLevel{
     startScene(): void {
         //Add tile map 
         this.add.tilemap("levell", new Vec2(2,2))
+        
+        // kyles map 
         this.viewport.setBounds(0,0, 64*32,64*32);
+        // this.viewport.setBounds(0,0, 64*16,20*16);
 
-        this.playerSpawn = new Vec2(5*32, 20*32)
+
+        this.playerSpawn = new Vec2(1*32, 2*32)
 
         super.startScene();
 
