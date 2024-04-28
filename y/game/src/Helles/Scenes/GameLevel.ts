@@ -177,7 +177,7 @@ export default class GameLevel extends Scene {
 
                                         if(enemy.enemyType === "miniBoss")
                                             {
-                                                this.spawnItem("old_arrow", enemy.owner.position)
+                                                this.spawnItem("key", enemy.owner.position)
                                             }
 
                                         other.destroy();
@@ -214,7 +214,7 @@ export default class GameLevel extends Scene {
                                     }
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    this.spawnItem("old_arrow" ,enemy.owner.position);
+                                    this.spawnItem("key" ,enemy.owner.position);
                                     
                                     enemy.dyingTimer = new Timer(1000, ()=>{
                                         node.destroy();                                    })
@@ -407,7 +407,7 @@ export default class GameLevel extends Scene {
                                     }
                             }
                         
-                        if((<Sprite>other).imageId === "old_arrow")
+                        if((<Sprite>other).imageId === "key")
                             {
 
                                 console.log("key should be picked")
