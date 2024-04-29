@@ -31,10 +31,16 @@ export default class Level1 extends GameLevel{
         //add other monster and music later on 
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
+
+        //adding sound effect 
+        this.load.audio("shoot", "helles_assets/sound/arrow_shooting.mp3")
+        this.load.audio("enemy_get_hit", "helles_assets/sound/enemy_getting_hit.mp3")
     }
 
     unloadScene(): void {
         //Have not decide what resource to keep for now 
+        this.load.keepAudio("shoot")
+        this.load.keepAudio("enemy_get_hit")
     }
 
     startScene(): void {

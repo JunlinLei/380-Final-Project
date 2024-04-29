@@ -120,7 +120,7 @@ export default class GameLevel extends Scene {
                         let dirction = event.data.get("direction")
 
                         this.spawnArrow(position, dirction);
-
+                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "shoot", loop: false, holdReference: false})
 
                     }
                     break;
@@ -134,7 +134,7 @@ export default class GameLevel extends Scene {
                     {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
-                        
+                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
                         
                         // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
@@ -204,10 +204,10 @@ export default class GameLevel extends Scene {
                                 console.log((<PlayerController>this.player._ai).damage)
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
                                 let position :Vec2 = Vec2.ZERO
+                                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
                                 position = enemy.owner.position.clone();
                                 if(enemy.enemyHealth > 0)
                                     {
-
                                         enemy.damageTimer = new Timer(1000, ()=>{
                                             (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
                                         })
@@ -272,7 +272,6 @@ export default class GameLevel extends Scene {
                         let enemyNode = event.data.get("node")
 
                         let enemy = (<EnemyController>enemyNode._ai);
-                        
                         let enemyType = enemy.enemyType;
 
                         let firstProj: Vec2 = new Vec2(0, 0);
@@ -283,12 +282,12 @@ export default class GameLevel extends Scene {
                             {
                                 if (shotPosition === "sameLevelRight" || shotPosition === "upperRight")
                                     {
-                                        firstProj.set(position.x + 16, position.y - 16)
+                                        firstProj.set(position.x + 16, position.y )
                                     }
                                     
                                 if (shotPosition === "sameLevelLeft" || shotPosition === "upperLeft")
                                     {
-                                        firstProj.set(position.x - 16, position.y - 16)
+                                        firstProj.set(position.x - 16, position.y )
                                     }
                             }
 
@@ -309,7 +308,7 @@ export default class GameLevel extends Scene {
 
 
                         if (enemy.projTimer.isStopped()) {
-
+                            (<AnimatedSprite>enemy.owner).animation.play("ATTACK", false,"IDLE");
                             this.spawnProj(firstProj, direction, enemyType);
                             this.spawnProj(secondProj, direction, enemyType);
                             this.spawnProj(thirdProj, direction, enemyType);
