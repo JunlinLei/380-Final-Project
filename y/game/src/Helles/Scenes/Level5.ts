@@ -3,17 +3,18 @@ import Debug from "../../Wolfie2D/Debug/Debug";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
-import Level2 from "./Level2"
-export default class Level1 extends GameLevel{
+import Level1 from "./Level1"
+
+export default class Level5 extends GameLevel{
 
     loadScene(): void {
 
-        
-        /* level specific data */
-        this.load.tilemap("levell","helles_assets/tilemaps/helles_level1.json")
-        this.load.object("levelData", "helles_assets/data/enemies/level1data.json") 
+        //load map and player
+        //TODO new tile map
+        this.load.tilemap("level5","helles_assets/tilemaps/helles_level5.json");
+        this.load.object("levelData", "helles_assets/data/enemies/level5data.json") 
 
-        this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
+        this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
         this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
@@ -21,16 +22,15 @@ export default class Level1 extends GameLevel{
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
-        // TODO add another projectile image with high contrast
-        
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
-        this.load.spritesheet("wraith", "helles_assets/spritesheets/wraith.json")
-        // load background image 
-
-        //add other monster and music later on 
+        this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
+        // enemy position data
+        
+
+        
     }
 
     unloadScene(): void {
@@ -38,27 +38,28 @@ export default class Level1 extends GameLevel{
     }
 
     startScene(): void {
-        //Add tile map 
-        this.add.tilemap("levell", new Vec2(2,2))
+
         
-        // 64 x 20 sprite map 
-        this.viewport.setBounds(0,0, 64*32,20*32);
-        // upper left of map
-        this.playerSpawn = new Vec2(4*32, 5*32)
+        //Add tile map 
+        this.add.tilemap("level5", new Vec2(2,2));
+
+        this.viewport.setBounds(0,0, 64*32,64*32);
+
+        this.playerSpawn = new Vec2(4*32, 24*32)
 
         super.startScene();
-        // behind first gate
-        this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
-        
-        this.nextLevel = Level2;
-        
+
+        this.addLevelEnd(new Vec2(3, 6), new Vec2(5, 5));
+       
+       
+        // TODO specify next level
+        this.nextLevel = Level1;
+
+
     }
 
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
     }
-
-  
-    
 
 }

@@ -23,7 +23,7 @@ export default class Level2 extends GameLevel{
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
-        this.load.image("old_arrow","helles_assets/spritesheets/old_arrow.png")
+        this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
         this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
@@ -73,5 +73,16 @@ export default class Level2 extends GameLevel{
         super.updateScene(deltaT);
         
     }
+
+    // initLayers(): void{
+    //     console.log("trying to add image to background layer")
+    //     this.addLayer("background2",1)
+    //     let bg = this.add.sprite("trees", "background2");
+    //     bg.scale.set(1,1)
+    //     bg.position.copy(this.viewport.getCenter())
+    //     super.initLayers();
+
+    // }
+
 
 }
