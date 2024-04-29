@@ -74,7 +74,7 @@ export default class PlayerController extends StateMachineAI{
 
     initializePlatformer(): void {
         this.speed = 400;
-        this.attackTimer = new Timer(1000);
+        this.attackTimer = new Timer(600);
         
         let idle = new Idle(this, this.owner);
         this.addState(PlayerStates.IDLE, idle);

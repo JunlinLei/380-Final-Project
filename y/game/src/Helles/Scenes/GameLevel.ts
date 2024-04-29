@@ -135,6 +135,7 @@ export default class GameLevel extends Scene {
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
                         
+                        
                         // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
                             if (node === this.arrows) {
@@ -143,7 +144,8 @@ export default class GameLevel extends Scene {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
-
+                                let position :Vec2 = Vec2.ZERO
+                                position = enemy.owner.position.clone();
                                 if(enemy.enemyHealth > 0)
                                     {
                                         enemy.damageTimer = new Timer(1000, ()=>{
@@ -161,34 +163,37 @@ export default class GameLevel extends Scene {
                                 // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
                                 
                                 //console.log(enemy.enemyHealth);
+                                
                                 if (enemy.enemyHealth <= 0) {
                                     enemy.dyingTimer = new Timer(1000, ()=>{
-
                                         if(enemy.enemyType === "wraith")
                                             {
 
-                                                this.spawnItem("damageUp",enemy.owner.position);
+                                                this.spawnItem("damageUp",position);
                                             }
 
                                         if (enemy.enemyType === "lurker")
                                             {
-                                                this.spawnItem("healthPotion",enemy.owner.position);
+                                                this.spawnItem("healthPotion",position);
                                             }
 
                                         if(enemy.enemyType === "miniBoss")
                                             {
-                                                this.spawnItem("old_arrow", enemy.owner.position)
+                                                this.spawnItem("old_arrow", position)
                                             }
-
-                                        other.destroy();
-                                    })
-
-                                    if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
-                                        // The player has reached the end of the level
-                                        enemy.dyingTimer.start();
-                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE")
-                                       
-                                    }
+                                        
+                                        if(other)
+                                            {
+                                                console.log(other)
+                                                other.destroy();
+                                            }
+                                        })
+                                        if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
+                                            // The player has reached the end of the level
+                                            enemy.dyingTimer.start();
+                                            (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
+                                            (<AnimatedSprite>enemy.owner).disablePhysics();
+                                        }
                                             
                                 }
                             }
@@ -198,6 +203,8 @@ export default class GameLevel extends Scene {
                                 console.log("player other damage")
                                 console.log((<PlayerController>this.player._ai).damage)
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
+                                let position :Vec2 = Vec2.ZERO
+                                position = enemy.owner.position.clone();
                                 if(enemy.enemyHealth > 0)
                                     {
 
@@ -214,19 +221,40 @@ export default class GameLevel extends Scene {
                                     }
                                 //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                    this.spawnItem("old_arrow" ,enemy.owner.position);
-                                    
+                                   
                                     enemy.dyingTimer = new Timer(1000, ()=>{
-                                        node.destroy();                                    })
+                                        if(enemy.enemyType === "wraith")
+                                            {
+
+                                                this.spawnItem("damageUp",position);
+                                            }
+
+                                        if (enemy.enemyType === "lurker")
+                                            {
+                                                this.spawnItem("healthPotion",position);
+                                            }
+
+                                        if(enemy.enemyType === "miniBoss")
+                                            {
+                                                this.spawnItem("old_arrow", position)
+                                            }
+                                        
+                                        if(other)
+                                            {
+
+                                                other.destroy();
+                                            }
+                                    })
 
                                     if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
                                         // The player has reached the end of the level
                                         console.log("** reached end of level **");
                                         enemy.dyingTimer.start();
                                         (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
+                                        (<AnimatedSprite>enemy.owner).disablePhysics();
                                     }
                                   
-                                    this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>node})
+                                    // this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>node})
                                     
                                 }
                             }
