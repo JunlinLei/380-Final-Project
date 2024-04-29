@@ -161,7 +161,7 @@ export default class PlayerController extends StateMachineAI{
         // console.log("stand tile: " + this.newPosition)
         
        if (this.key == true) {
-            if (tileValue === 16 || tileValue === 7) {
+            if (tileValue === 16 || tileValue === 7|| tileValue === 58) {
                 let topTile : Vec2 = new Vec2(playerStandTile.x,playerStandTile.y-1)
                 this.tilemap.setTileAtRowCol(playerStandTile, 0)
                 this.tilemap.setTileAtRowCol(topTile, 0)

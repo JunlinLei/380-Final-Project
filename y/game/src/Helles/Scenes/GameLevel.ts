@@ -149,12 +149,12 @@ export default class GameLevel extends Scene {
                                         enemy.damageTimer = new Timer(1000, ()=>{
                                             (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
                                         })
-        
+
                                         if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
                                             // The player has reached the end of the level
                                             enemy.damageTimer.start();
                                             (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
-                                           
+
                                         }                     
                                     }
 
@@ -614,7 +614,12 @@ export default class GameLevel extends Scene {
         // }
     }
 
-
+    /**
+     * Projectile initialization for specified sprite
+     * @param position 
+     * @param enemyType 
+     * @param aiOptions 
+     */
     protected initProj(position: Vec2, enemyType:string, aiOptions: Record<string, any>): void {
         console.log(enemyType)
         if(enemyType === "lurker" )
@@ -627,7 +632,7 @@ export default class GameLevel extends Scene {
             {
                 this.enemyProj = this.add.sprite("fireball", "primary")
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 16)));
-                this.enemyProj.scale.set(0.25,0.25)
+                this.enemyProj.scale.set(0.4,0.4)
             }
 
         this.enemyProj.position.set(position.x, position.y)
