@@ -2,6 +2,7 @@ import Input from "../../../Wolfie2D/Input/Input";
 import Sprite from "../../../Wolfie2D/Nodes/Sprites/Sprite";
 import MathUtils from "../../../Wolfie2D/Utils/MathUtils";
 import { PlayerStates } from "../PlayerController";
+import Jump from "./Jump";
 import PlayerState from "./PlayerState";
 
 export default abstract class InAir extends PlayerState {
@@ -23,6 +24,7 @@ export default abstract class InAir extends PlayerState {
                 this.finished(PlayerStates.INAIRATTACK);
                 this.parent.attackTimer.start();
             }
+
 
         if(this.owner.onGround){
 			this.finished(PlayerStates.PREVIOUS);

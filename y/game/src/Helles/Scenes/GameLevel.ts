@@ -655,12 +655,17 @@ export default class GameLevel extends Scene {
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
             }
         
-        else if (enemyType === "wraith" || enemyType === "miniBoss")
+        else if (enemyType === "wraith")
             {
                 this.enemyProj = this.add.sprite("fireball", "primary")
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 16)));
                 this.enemyProj.scale.set(0.4,0.4)
             }
+        else if (enemyType === "miniBoss")
+                {
+                    this.enemyProj = this.add.sprite("wave", "primary")
+                    this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 48)));
+                }
 
         this.enemyProj.position.set(position.x, position.y)
         this.enemyProj.addAI(EnemyProjController, aiOptions);

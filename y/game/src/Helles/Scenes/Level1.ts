@@ -20,6 +20,7 @@ export default class Level1 extends GameLevel{
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+        this.load.image("wave", "helles_assets/spritesheets/wave.png")
 
         // TODO add another projectile image with high contrast
         
@@ -41,6 +42,13 @@ export default class Level1 extends GameLevel{
         //Have not decide what resource to keep for now 
         this.load.keepAudio("shoot")
         this.load.keepAudio("enemy_get_hit")
+        this.load.keepImage("arrow")
+        this.load.keepImage("key")
+        this.load.keepImage("fireball")
+        this.load.keepImage("flame")
+        this.load.keepImage("healthPotion")
+        this.load.keepImage("damgeUp")
+        this.load.keepImage("wave")
     }
 
     startScene(): void {

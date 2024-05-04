@@ -53,6 +53,7 @@ export default class PlayerController extends StateMachineAI{
     newPosition: Vec2 = Vec2.ZERO;
     key : boolean = false; 
     damage : number = 1;
+    isJump : boolean = false;
 
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
@@ -106,7 +107,7 @@ export default class PlayerController extends StateMachineAI{
 
         //if we jump or fall, push the states so we can go back to our current state later 
         //unless we're from jumping or falling 
-        if((state === PlayerStates.FALL || state ===PlayerStates.JUMP || state === PlayerStates.IDLE)&& !(this.stack.peek() instanceof InAir))
+        if(( state === PlayerStates.FALL || state ===PlayerStates.JUMP )&& !(this.stack.peek() instanceof InAir))
             {
                 this.stack.push(this.stateMap.get(state));
             }
@@ -137,14 +138,6 @@ export default class PlayerController extends StateMachineAI{
 
     update(deltaT: number): void {
         super.update(deltaT);
-
-        //console.log(this.playerHealth)
-
-        // if(Input.isJustPressed("attack"))
-        //     {
-                
-        //         this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction: this.currentState} )
-        //     }
 
         let enemyPosition = this.owner.position;
 

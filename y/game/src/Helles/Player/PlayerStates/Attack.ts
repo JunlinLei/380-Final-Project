@@ -24,8 +24,7 @@ export default class Attack extends PlayerState {
                         this.finished(PlayerStates.IDLE);
                         
                     }
-            
-        
+                
     }
 
     onExit(): Record<string, any> {
