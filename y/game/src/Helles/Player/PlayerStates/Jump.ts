@@ -26,10 +26,14 @@ export default class Jump extends InAir {
         //     this.finished(PlayerStates.FALL);
         // }
 
-        if(Input.isPressed("jump") && this.parent.velocity.y >= - 420 && !this.owner.onCeiling)
+        this.parent.currJumpPOs = this.owner.position.y;
+        let jumpDistance =  this.parent.currJumpPOs - this.parent.initJumpPos
+        console.log(jumpDistance);
+
+        if(Input.isPressed("jump") && jumpDistance >= -160)
             {
-                console.log(this.parent.velocity.y)
-                this.parent.velocity.y -= 20
+                // console.log(this.parent.velocity.y)
+                this.parent.velocity.y = -380;
             }
 
         else if(!this.owner.onGround)

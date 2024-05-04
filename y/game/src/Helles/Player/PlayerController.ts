@@ -53,7 +53,8 @@ export default class PlayerController extends StateMachineAI{
     newPosition: Vec2 = Vec2.ZERO;
     key : boolean = false; 
     damage : number = 1;
-    isJump : boolean = false;
+    initJumpPos : number; 
+    currJumpPOs : number;
 
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;

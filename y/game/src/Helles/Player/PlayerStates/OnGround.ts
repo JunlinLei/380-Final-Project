@@ -46,6 +46,7 @@ export default class OnGround extends PlayerState {
 
         // animate for jumping 
         if(Input.isJustPressed("jump")){
+            this.parent.initJumpPos = this.owner.position.y;
             this.finished("jump");
             this.parent.velocity.y = -380;
             if(this.parent.velocity.x !==0){
