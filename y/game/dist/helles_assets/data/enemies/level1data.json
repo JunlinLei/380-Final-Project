@@ -11,6 +11,12 @@
     "wraiths": [
       
         [1920,160]
+    ],
+    "monsterHealth":[
+        [2, 4, 5]
+    ],
+    "manaPosition":[
+        [576, 96]
     ]
     
 }

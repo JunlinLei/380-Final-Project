@@ -1,11 +1,7 @@
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import OnGround from "./OnGround";
 import { PlayerStates } from "../PlayerController";
 import PlayerState from "./PlayerState";
-import Input from "../../../Wolfie2D/Input/Input";
-import Timer from "../../../Wolfie2D/Timing/Timer";
 import { Helles_Events } from "../../helles_enums";
-import Walk from "./Walk";
 
 export default class Attack extends PlayerState {
     owner: AnimatedSprite; 

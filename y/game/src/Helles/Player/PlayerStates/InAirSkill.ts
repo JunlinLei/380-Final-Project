@@ -3,7 +3,7 @@ import { PlayerStates } from "../PlayerController";
 import { Helles_Events } from "../../helles_enums";
 import InAir from "./InAir";
 
-export default class InAirAttack extends InAir {
+export default class InAirSkill extends InAir {
     owner: AnimatedSprite; 
     onEnter(options: Record<string, any>): void {
 
@@ -20,7 +20,7 @@ export default class InAirAttack extends InAir {
                 if(this.owner.animation.isPlaying("SHOOT_RIGHT") === false )
                     {   
                                 
-                        this.emitter.fireEvent(Helles_Events.PLAYER_ATTACK, {position: this.owner.position, direction : this.getDirection()} )
+                        this.emitter.fireEvent(Helles_Events.PLAYER_SKILL, {position: this.owner.position, direction : this.getDirection()} )
                         this.finished(PlayerStates.IDLE);
                     }
     }

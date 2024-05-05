@@ -39,12 +39,17 @@ export default class GameLevel extends Scene {
     private playerinvicibleTime: number = 0;
     private playerinvicibleMAXTIME: number = 1;
     private playerinvicibleEndTime: number = 0;
+    protected playerMana: number = 2 ;
+    protected playerMaxMana: number = 2; 
  
     protected enemyHealth: number = 5;
     //Labels for the gui
     private healthLabel: Label;
     private healthLabelBrd: Label;
     private healthLabelInnerBrd: Label;
+    private manaLabel: Label;
+    private manaLabelBrd: Label;
+    private manaLabelInnerBrd: Label;
     private attackDamage : Label;
     protected arrows: Sprite;
     protected enemyProj: Sprite;
@@ -71,6 +76,7 @@ export default class GameLevel extends Scene {
         this.subscribeToEvents();
         this.initialUI();
         this.addUI();
+        this.initItem();
         // this.initArrows()
         this.respawnTimer = new Timer(1200, () => {
             //later on in this project, check life count, if life is zero go back to main menu 
@@ -124,21 +130,48 @@ export default class GameLevel extends Scene {
 
                     }
                     break;
+                
+                case Helles_Events.PLAYER_SKILL:
+                    {
+                        let position = event.data.get("position");
+                        let dirction = event.data.get("direction");
+                        let firstArrow : Vec2 =  Vec2.ZERO;
+                        let secondArrow : Vec2 = Vec2.ZERO;
+                        let thirdArrow : Vec2 = Vec2.ZERO; 
 
+                        if(this.playerMana >0)
+                            {
 
+                                firstArrow.set(position.x + 48 , position.y-16)
+                                secondArrow.set(position.x+32, position.y)
+                                thirdArrow.set(position.x+16, position.y+16)
+                                this.spawnArrow(firstArrow, dirction);
+                                this.spawnArrow(secondArrow, dirction);
+                                this.spawnArrow(thirdArrow, dirction);
+        
+                                this.playerMana = this.playerMana - 1;
+                                this.manaLabel.size.set((this.playerMana / this.playerMaxMana) * this.manaLabelBrd.size.x, this.manaLabel.size.y);
+                                this.manaLabel.position.set(this.manaLabelBrd.position.x - ((this.playerMaxMana - this.playerMana) / this.playerMaxMana) * this.manaLabelBrd.size.x / 4, this.manaLabelBrd.position.y)
+        
+                                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "shoot", loop: false, holdReference: false})
+                            }
+
+                    }
+                    break;
                 /**
                 * Event: The arrow hits an enemy
                 * Reduce the enemy's health and destory the arrow
                 */
                 case Helles_Events.ARROW_HIT_ENEMY:
                     {
-                        let node = this.sceneGraph.getNode(event.data.get("node"));
+                        let node = <Sprite>this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
                         this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
                         
                         // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
-                            if (node === this.arrows) {
+
+                            if (node.imageId === "arrow") {
                                 console.log("player damage")
                                 console.log((<PlayerController>this.player._ai).damage)
                                 node.destroy();
@@ -202,10 +235,12 @@ export default class GameLevel extends Scene {
                                 let enemy = (<EnemyController>node._ai);
                                 console.log("player other damage")
                                 console.log((<PlayerController>this.player._ai).damage)
+                                console.log(enemy)
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
                                 let position :Vec2 = Vec2.ZERO
                                 this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
                                 position = enemy.owner.position.clone();
+                                console.log(enemy.enemyHealth);
                                 if(enemy.enemyHealth > 0)
                                     {
                                         enemy.damageTimer = new Timer(1000, ()=>{
@@ -219,9 +254,9 @@ export default class GameLevel extends Scene {
                                            
                                         } 
                                     }
-                                //console.log(enemy.enemyHealth);
+                                console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                   
+                                   console.log("spawn item")
                                     enemy.dyingTimer = new Timer(1000, ()=>{
                                         if(enemy.enemyType === "wraith")
                                             {
@@ -239,10 +274,10 @@ export default class GameLevel extends Scene {
                                                 this.spawnItem("key", position)
                                             }
                                         
-                                        if(other)
+                                        if(node)
                                             {
 
-                                                other.destroy();
+                                                node.destroy();
                                             }
                                     })
 
@@ -456,6 +491,27 @@ export default class GameLevel extends Scene {
                     }
                 }
                 break;
+
+                case Helles_Events.SUMMON_MINIONS:
+                    {
+                        let position: Vec2 = event.data.get("position")
+                        let firstPosition : Vec2 = Vec2.ZERO;
+                        let secondPosition : Vec2 = Vec2.ZERO;
+                        let thirdPosition : Vec2 = Vec2.ZERO;
+                        let fouthPosition : Vec2 = Vec2.ZERO;
+
+                        firstPosition.set(position.x+32 , position.y)
+                        secondPosition.set(position.x+64 , position.y)
+                        thirdPosition.set(position.x-32 , position.y)
+                        fouthPosition.set(position.x-64 , position.y)
+
+                        this.spawnEnemy(firstPosition, "lurker")
+                        this.spawnEnemy(secondPosition, "lurker")
+                        this.spawnEnemy(thirdPosition, "lurker")
+                        this.spawnEnemy(fouthPosition, "lurker")
+                        
+                    }
+                break;
                 case Helles_Events.PLAYER_KILLED: 
                 {
                     this.respawnPlayer();
@@ -502,7 +558,9 @@ export default class GameLevel extends Scene {
             Helles_Events.DAMAGE_ANIMATION,
             Helles_Events.PLAYER_KILLED,
             Helles_Events.PLAYER_PICK_KEY,
-            Helles_Events.MONSTER_DYING
+            Helles_Events.MONSTER_DYING,
+            Helles_Events.SUMMON_MINIONS,
+            Helles_Events.PLAYER_SKILL
         ])
     }
 
@@ -516,9 +574,9 @@ export default class GameLevel extends Scene {
         console.log("initializing NPCs")
         let data = this.load.getObject("levelData");
         // console.log(enemyCoords);
-        if(data.lurkers) {
+        if(data.lurkers&&data.monsterHealth) {
             let lurkers = data.lurkers;
-        
+            let health = data.monsterHealth
         for (let i = 0; i < data.lurkers.length;i ++) {
             let npc = this.add.animatedSprite("lurker", "primary");
             npc.position.set(lurkers[i][0], lurkers[i][1]);
@@ -528,14 +586,15 @@ export default class GameLevel extends Scene {
             npc.setGroup("enemy");
 
             // send player position
-            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "lurker" });// 
+            npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: health[0][0], enemyType: "lurker" });// 
             npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
         }
     }
-        if(data.wraiths)
+        if(data.wraiths&&data.monsterHealth)
             {
 
                 let wraiths = data.wraiths;
+                let health = data.monsterHealth
                 for (let i = 0; i < data.wraiths.length;i ++) {
                     let npc = this.add.animatedSprite("wraith", "primary");
                     npc.position.set(wraiths[i][0], wraiths[i][1]);
@@ -545,13 +604,14 @@ export default class GameLevel extends Scene {
                     npc.setGroup("enemy");
         
                     // send player position
-                    npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "wraith" });// 
+                    npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: health[0][1], enemyType: "wraith" });// 
                     npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
                 }
             }
         
-        if (data.miniBoss) {
+        if (data.miniBoss&&data.monsterHealth) {
             let miniBoss = data.miniBoss;
+            let health = data.monsterHealth
             for (let i = 0; i < data.miniBoss.length;i ++) {
                 let npc = this.add.animatedSprite("moss", "primary");
                 npc.position.set(miniBoss[i][0], miniBoss[i][1]);
@@ -560,10 +620,25 @@ export default class GameLevel extends Scene {
                 npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
                 npc.setGroup("enemy");
                 // send player position
-                npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: this.enemyHealth, enemyType: "miniBoss" });// 
+                npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: health[0][2], enemyType: "miniBoss" });// 
                 npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
             }
         }
+
+    }
+
+    protected initItem():void{
+        let data = this.load.getObject("levelData");
+        if(data.manaPosition)
+            {
+                for (let i = 0; i < data.manaPosition.length; i ++)
+                    {
+                        let manaPosition : Vec2 = Vec2.ZERO;
+                        manaPosition.set(data.manaPosition[i][0], data.manaPosition[i][1]);
+                        console.log(manaPosition)
+                        this.spawnItem("manaPotion", manaPosition)
+                    }
+            }
 
     }
 
@@ -754,7 +829,24 @@ export default class GameLevel extends Scene {
         this.healthLabelInnerBrd.borderWidth = 4;
         this.healthLabelInnerBrd.size.set(200, 25);
 
-        this.attackDamage =<Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(70, 55), text: " attack : " +(<PlayerController>this.player._ai).damage  });
+        this.manaLabel = <Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(100, 55), text: "" });
+        this.manaLabel.size.set(200, 25);
+        this.manaLabel.setHAlign("left");
+        this.manaLabel.backgroundColor = Color.BLUE;
+
+        this.manaLabelBrd = <Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(100, 55), text: "" });
+        this.manaLabelBrd.backgroundColor = Color.TRANSPARENT;
+        this.manaLabelBrd.borderColor = Color.BLACK;
+        this.manaLabelBrd.borderWidth = 2;
+        this.manaLabelBrd.size.set(205, 30);
+
+        this.manaLabelInnerBrd = <Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(100, 55), text: "" });
+        this.manaLabelInnerBrd.backgroundColor = Color.TRANSPARENT;
+        this.manaLabelInnerBrd.borderColor = new Color(102, 51, 0);
+        this.manaLabelInnerBrd.borderWidth = 4;
+        this.manaLabelInnerBrd.size.set(200, 25);
+
+        this.attackDamage =<Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(70, 75), text: " attack : " +(<PlayerController>this.player._ai).damage  });
         this.attackDamage.textColor = Color.WHITE
     }
 

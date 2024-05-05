@@ -25,6 +25,7 @@ export default class Level1 extends GameLevel{
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
         this.load.image("wave", "helles_assets/spritesheets/wave.png")
+        this.load.image("manaPotion", "helles_assets/spritesheets/manaPotion.png")
 
         // TODO add another projectile image with high contrast
         
@@ -54,6 +55,7 @@ export default class Level1 extends GameLevel{
         this.load.keepImage("healthPotion")
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
+        this.load.keepImage("manaPotion")
         
     }
 

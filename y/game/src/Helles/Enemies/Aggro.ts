@@ -75,6 +75,15 @@ export default class Idle extends EnemyState {
 					this.finished(EnemyStates.IDLE)
 					
 				}
+
+
+				let percentHealth : number;
+				percentHealth = this.parent.enemyHealth/this.parent.maxHealth;
+				if(percentHealth <= 0.5 && this.parent.isMinionsSummon === false && this.parent.enemyType === "miniBoss")
+					{
+						this.parent.isMinionsSummon = true; 
+						this.emitter.fireEvent(Helles_Events.SUMMON_MINIONS, {position: this.owner.position})
+					} 
 			
 
 

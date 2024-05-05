@@ -25,12 +25,14 @@ export default class EnemyController extends StateMachineAI {
 	speed: number = 50;        //CHANGE THIS BACK TO SMALLER VALUE (50)
 	ySpeed: number = 0;
 	gravity: number = 1000;
+    maxHealth: number; 
     enemyHealth: number;
     projTimer : Timer;
     dyingTimer : Timer; 
     damageTimer : Timer;
     turnTimer : Timer;
     enemyType : string; 
+    isMinionsSummon : boolean = false;
 
     // used to determine walkable path for enemy
     tilemap: OrthogonalTilemap;
@@ -64,6 +66,7 @@ export default class EnemyController extends StateMachineAI {
 		this.initialize(EnemyStates.IDLE);
   
         this.enemyHealth = options.enemyHealth;
+        this.maxHealth = options.enemyHealth;
 
         this.enemyType = options.enemyType; 
 	}

@@ -35,6 +35,17 @@ export default class Level4 extends GameLevel{
 
     unloadScene(): void {
         //Have not decide what resource to keep for now 
+        this.load.keepAudio("shoot")
+        this.load.keepAudio("enemy_get_hit")
+        this.load.keepImage("arrow")
+        this.load.keepImage("key")
+        this.load.keepImage("fireball")
+        this.load.keepImage("flame")
+        this.load.keepImage("healthPotion")
+        this.load.keepImage("damageUp")
+        this.load.keepImage("wave")
+        this.load.keepImage("manaPotion")
+
     }
 
     startScene(): void {
