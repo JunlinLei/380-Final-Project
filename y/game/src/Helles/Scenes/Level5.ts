@@ -47,6 +47,8 @@ export default class Level5 extends GameLevel{
 
         this.playerSpawn = new Vec2(4*32, 24*32)
 
+        this.playerDamage = this.sceneOptions.physics.damage;
+
         super.startScene();
 
         this.addLevelEnd(new Vec2(3, 6), new Vec2(5, 5));
