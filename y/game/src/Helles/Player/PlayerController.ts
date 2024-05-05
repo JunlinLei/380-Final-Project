@@ -65,6 +65,7 @@ export default class PlayerController extends StateMachineAI{
         
         /**initial the health of the player */
         this.playerHealth = options.playerHealth;
+        this.damage = options.damage + 3
 
         this.receiver.subscribe(Helles_Events.PLAYER_DAMAGE);
         this.receiver.subscribe(Helles_Events.DAMAGE_ANIMATION)

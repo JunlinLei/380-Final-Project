@@ -30,7 +30,7 @@ export default class Jump extends InAir {
         let jumpDistance =  this.parent.currJumpPOs - this.parent.initJumpPos
         console.log(jumpDistance);
 
-        if(Input.isPressed("jump") && jumpDistance >= -160)
+        if(Input.isPressed("jump") && jumpDistance >= -128)
             {
                 // console.log(this.parent.velocity.y)
                 this.parent.velocity.y = -380;

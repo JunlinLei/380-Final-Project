@@ -21,6 +21,8 @@ export default class MainMenu extends Scene{
         // Load the menu song
         // this.load.audio("menu", "hw5_assets/music/menu.mp3");
         this.load.image("logo","helles_assets/images/helleslogo.png")
+        this.load.audio("themeMusic", "helles_assets/music/helles_theme_music.mp3")
+
     }
 
     startScene(): void {
@@ -121,12 +123,12 @@ export default class MainMenu extends Scene{
 
 
         // Scene has started, so start playing music no music yet
-        // this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "themeMusic", loop: true, holdReference: true});
     }
 
     unloadScene(): void {
         // The scene is being destroyed, so we can stop playing the song
-        // this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "menu"});
+        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "themeMusic"});
     }
 
 }

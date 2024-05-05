@@ -23,7 +23,7 @@ import { Helles_Events, BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
-
+import * as fs from 'fs';
 
 export default class GameLevel extends Scene {
 
@@ -33,6 +33,7 @@ export default class GameLevel extends Scene {
     protected respawnTimer: Timer;
 
     private playerHealth: number = 10;
+    protected playerDamage: number = 1 ;
     private playerMaxHealth: number = 10;
     private playerinvincible: boolean = false;
     private playerinvicibleTime: number = 0;
@@ -61,7 +62,6 @@ export default class GameLevel extends Scene {
 
     //we first start scene 
     startScene(): void {
-
 
         //game level standard initializations 
         this.initLayers();
@@ -367,10 +367,11 @@ export default class GameLevel extends Scene {
                                         [1, 1, 1, 1, 0, 0],
                                         [1, 1, 0, 0, 0, 0],
                                         [1, 0, 0, 0 ,0, 0]
-                                    ]
-                                }
+                                    ],
+                                    damage : this.playerDamage
+                                },
                             }
-                            this.sceneManager.changeToScene(this.nextLevel, {}, sceneOptions);
+                            this.sceneManager.changeToScene(this.nextLevel, {damage : this.playerDamage}, sceneOptions);
                         }
                     }
                     break;
@@ -444,8 +445,9 @@ export default class GameLevel extends Scene {
                         
                         if((<Sprite>other).imageId === "damageUp")
                             {
-                                
-                                (<PlayerController>this.player._ai).damage += 1
+                                this.playerDamage += 1;
+                                console.log("player damage " + this.playerDamage);
+                                (<PlayerController>this.player._ai).damage += 1;
                                 this.attackDamage.text = "attack : " + (<PlayerController>this.player._ai).damage
                             }
                             
@@ -461,6 +463,9 @@ export default class GameLevel extends Scene {
             }
 
         }
+
+        
+
     }
 
 
@@ -559,13 +564,29 @@ export default class GameLevel extends Scene {
                 npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
             }
         }
-        
+
+    }
+
+    protected spawnEnemy(position:Vec2, enemyType: string) : void{
+        let enemy = this.add.animatedSprite(enemyType, "primary");
+        enemy.position.set(position.x, position.y)
+
+        enemy.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+        enemy.animation.play("IDLE");
+        enemy.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+        enemy.setGroup("enemy");
+
+            // send player position
+        enemy.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: 2, enemyType: enemyType });// 
+        enemy.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
 
     }
 
     //init player 
     protected initPlayer(): void {
         this.player = this.add.animatedSprite("player", "primary");
+        
+
         //scale the player 
         this.player.scale.set(0.2, 0.2);
 
@@ -573,11 +594,12 @@ export default class GameLevel extends Scene {
             console.warn("Player spawn is not set yet, the sysytem will set it to (0,0)")
             this.playerSpawn = Vec2.ZERO;
         }
+        
         this.player.position.copy(this.playerSpawn);
         this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20, 22)))
         this.player.colliderOffset.set(0, 2);
         //add player AI here, not sure if necessary 
-        this.player.addAI(PlayerController, { playerType: "platformer", tilemap: "Main", playerHealth: this.playerMaxHealth });
+        this.player.addAI(PlayerController, { playerType: "platformer", tilemap: "Main", playerHealth: this.playerMaxHealth, damage: this.playerDamage});
 
         this.player.setGroup("player");
         this.viewport.follow(this.player);
@@ -732,7 +754,7 @@ export default class GameLevel extends Scene {
         this.healthLabelInnerBrd.borderWidth = 4;
         this.healthLabelInnerBrd.size.set(200, 25);
 
-        this.attackDamage =<Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(70, 55), text: " attack : " + (<PlayerController>this.player._ai).damage});
+        this.attackDamage =<Label>this.add.uiElement(UIElementType.LABEL, "UI", { position: new Vec2(70, 55), text: " attack : " +(<PlayerController>this.player._ai).damage  });
         this.attackDamage.textColor = Color.WHITE
     }
 

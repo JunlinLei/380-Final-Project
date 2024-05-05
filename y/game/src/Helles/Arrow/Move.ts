@@ -20,6 +20,14 @@ export default class Move extends ArrowState{
         }
         this.parent.velocity.x = this.parent.direction * this.parent.speed;
 		this.owner.move(this.parent.velocity.scaled(deltaT));
+        this.parent.updatePos = this.owner.position.x; 
+
+        let distance = this.parent.updatePos - this.parent.initPos;
+        if(distance >= 320 || distance<= -320 )
+            {
+                this.owner.destroy();
+            }
+
     }
 
     onExit(): Record<string, any> {

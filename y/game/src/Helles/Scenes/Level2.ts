@@ -58,10 +58,14 @@ export default class Level2 extends GameLevel{
 
         this.playerSpawn = new Vec2(5*32, 14*32)
 
+        this.playerDamage = this.sceneOptions.physics.damage;
+        
         super.startScene();
 
+        // this.player.position.copy(this.playerSpawn);
         this.addLevelEnd(new Vec2(60, 13), new Vec2(5, 5));
 
+        
 
         // TODO specify next level
         this.nextLevel = Level3;
@@ -73,16 +77,6 @@ export default class Level2 extends GameLevel{
         super.updateScene(deltaT);
         
     }
-
-    // initLayers(): void{
-    //     console.log("trying to add image to background layer")
-    //     this.addLayer("background2",1)
-    //     let bg = this.add.sprite("trees", "background2");
-    //     bg.scale.set(1,1)
-    //     bg.position.copy(this.viewport.getCenter())
-    //     super.initLayers();
-
-    // }
 
 
 }

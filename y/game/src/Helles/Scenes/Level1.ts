@@ -4,7 +4,11 @@ import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
 import Level2 from "./Level2"
+import * as fs from 'fs'
 export default class Level1 extends GameLevel{
+
+
+    
 
     loadScene(): void {
 
@@ -36,6 +40,7 @@ export default class Level1 extends GameLevel{
         //adding sound effect 
         this.load.audio("shoot", "helles_assets/sound/arrow_shooting.mp3")
         this.load.audio("enemy_get_hit", "helles_assets/sound/enemy_getting_hit.mp3")
+        
     }
 
     unloadScene(): void {
@@ -47,8 +52,9 @@ export default class Level1 extends GameLevel{
         this.load.keepImage("fireball")
         this.load.keepImage("flame")
         this.load.keepImage("healthPotion")
-        this.load.keepImage("damgeUp")
+        this.load.keepImage("damageUp")
         this.load.keepImage("wave")
+        
     }
 
     startScene(): void {
@@ -58,8 +64,9 @@ export default class Level1 extends GameLevel{
         // 64 x 20 sprite map 
         this.viewport.setBounds(0,0, 64*32,20*32);
         // upper left of map
+        
         this.playerSpawn = new Vec2(4*32, 5*32)
-
+       
         super.startScene();
         // behind first gate
         this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
