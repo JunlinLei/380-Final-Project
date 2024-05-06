@@ -35,6 +35,7 @@ export default class Level2 extends GameLevel{
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
+        this.load.spritesheet("fly", "helles_assets/spritesheets/fly.json")
 
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
@@ -65,7 +66,7 @@ export default class Level2 extends GameLevel{
         //Add tile map 
         this.add.tilemap("level2", new Vec2(2,2));
 
-        this.viewport.setBounds(0,0, 64*32,20*32);
+        this.viewport.setBounds(0,0, 64*32,64*32);
 
         this.playerSpawn = new Vec2(5*32, 14*32)
 
