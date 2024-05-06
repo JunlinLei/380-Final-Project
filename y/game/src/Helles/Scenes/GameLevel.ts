@@ -56,7 +56,6 @@ export default class GameLevel extends Scene {
     protected firstArrowTimer : Timer ; 
     protected secondArrowTimer : Timer ; 
 
-
     // Stuff to end the level and go to the next level
     protected levelEndArea: Rect;
     protected nextLevel: new (...args: any) => GameLevel;
@@ -697,7 +696,7 @@ export default class GameLevel extends Scene {
     protected initPlayer(): void {
         this.player = this.add.animatedSprite("player", "primary");
         
-
+        let data = this.load.getObject("levelData");
         //scale the player 
         this.player.scale.set(0.2, 0.2);
 
@@ -706,17 +705,22 @@ export default class GameLevel extends Scene {
             this.playerSpawn = Vec2.ZERO;
         }
         
-        this.player.position.copy(this.playerSpawn);
-        this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20, 22)))
-        this.player.colliderOffset.set(0, 2);
-        //add player AI here, not sure if necessary 
-        this.player.addAI(PlayerController, { playerType: "platformer", tilemap: "Main", playerHealth: this.playerMaxHealth, damage: this.playerDamage});
+        if(data.door)
+            {
+                console.log("door value" + data.door[0])
+                this.player.position.copy(this.playerSpawn);
+                this.player.addPhysics(new AABB(Vec2.ZERO, new Vec2(20, 22)))
+                this.player.colliderOffset.set(0, 2);
+                //add player AI here, not sure if necessary 
+                this.player.addAI(PlayerController, { playerType: "platformer", tilemap: "Main", playerHealth: this.playerMaxHealth, damage: this.playerDamage, door: data.door[0]});
+        
+                this.player.setGroup("player");
+                this.viewport.follow(this.player);
+        
+                this.player.setTrigger("enemy", Helles_Events.PLAYER_DAMAGE, null);
+                this.player.setTrigger("proj", Helles_Events.PROJ_HIT_PLAYER, null);
+            }
 
-        this.player.setGroup("player");
-        this.viewport.follow(this.player);
-
-        this.player.setTrigger("enemy", Helles_Events.PLAYER_DAMAGE, null);
-        this.player.setTrigger("proj", Helles_Events.PROJ_HIT_PLAYER, null);
 
         //this.player.collisionShape.overlaps()
     }

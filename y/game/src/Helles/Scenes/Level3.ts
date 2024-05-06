@@ -11,7 +11,7 @@ export default class Level3 extends GameLevel{
 
         //load map and player
         //TODO new tile map
-        this.load.tilemap("level3","helles_assets/tilemaps/helles_level3.json");
+        this.load.tilemap("level3","helles_assets/tilemaps/helles_new_level3.json");
         this.load.object("levelData", "helles_assets/data/enemies/level3data.json") 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
@@ -54,7 +54,7 @@ export default class Level3 extends GameLevel{
         //Add tile map 
         this.add.tilemap("level3", new Vec2(2,2));
 
-        this.viewport.setBounds(0,0, 64*32,20*32);
+        this.viewport.setBounds(0,0, 64*32,64*32);
 
         this.playerSpawn = new Vec2(5*32, 14*32)
 

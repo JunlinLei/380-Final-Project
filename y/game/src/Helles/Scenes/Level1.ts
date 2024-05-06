@@ -60,6 +60,7 @@ export default class Level1 extends GameLevel{
         //adding sound effect 
         this.load.audio("shoot", "helles_assets/sound/arrow_shooting.mp3")
         this.load.audio("enemy_get_hit", "helles_assets/sound/enemy_getting_hit.mp3")
+        this.load.audio("level1_music", "helles_assets/music/level1.mp3")
         
     }
 
@@ -96,6 +97,8 @@ export default class Level1 extends GameLevel{
         this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
 
         this.nextLevel = Level2;
+
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level1_music", loop:true,holdReference: true})
         
     }
 
