@@ -9,6 +9,7 @@ import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
 import Level2 from "./Level2"
+
 export default class Level1 extends GameLevel{
 
 
@@ -20,6 +21,19 @@ export default class Level1 extends GameLevel{
         /* level specific data */
         this.load.tilemap("levell","helles_assets/tilemaps/helles_level1.json")
         this.load.object("levelData", "helles_assets/data/enemies/level1data.json") 
+        // load background image 
+        this.load.image("bg3","helles_assets/images/level1_bg3.png" )
+        this.load.image("bg2","helles_assets/images/level1_bg2.png" )
+        this.load.image("bg1","helles_assets/images/level1_bg1.png" )
+        // load foreground
+        this.load.image("fg3","helles_assets/images/level1_fg3.png" )
+        this.load.image("fg2","helles_assets/images/level1_fg2.png" )
+
+
+        
+
+        // Add a background to the scene
+
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json")
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
@@ -76,14 +90,55 @@ export default class Level1 extends GameLevel{
        
         super.startScene();
         // behind first gate
-        this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
+        this.addLevelEnd(new Vec2(26, 8), new Vec2(2, 2));
         
+        //TODO FINAL : remove 
+        this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
+
         this.nextLevel = Level2;
         
     }
 
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
+    }
+
+    initLayers(): void {
+             
+        // super.initLayers();
+        // Add the tilemap. Top left corner is (0, 0) by default
+        this.addParallaxLayer("bg3", new Vec2(0.5, 0.5), -5);
+        this.addParallaxLayer("bg2", new Vec2(0.8, 0.8), -2);
+        this.addParallaxLayer("bg1", new Vec2(0.9, 0.9), -1);
+
+
+        this.addParallaxLayer("fg3", new Vec2(1.3, 1.15), 10);
+        this.addParallaxLayer("fg2", new Vec2(1.2, 1.1), 5);
+
+
+        let bg3 = this.add.sprite("bg3", "bg3");
+        let bg2 = this.add.sprite("bg2", "bg2");
+        let bg1 = this.add.sprite("bg1", "bg1");
+
+        bg3.position.set(bg3.size.x/2, bg3.size.y/2);
+        bg2.position.set(bg2.size.x/2, bg2.size.y/2)
+        bg1.position.set(bg1.size.x/2, bg1.size.y/2 );
+
+        let fg3 = this.add.sprite("fg3", "fg3")
+        let fg2 = this.add.sprite("fg2", "fg2")        
+
+        fg3.scale.set(2,2)
+        fg2.scale.set(2,2)
+
+        fg3.position.set(fg3.size.x, fg3.size.y);
+        fg2.position.set(fg2.size.x, fg2.size.y);
+
+
+        super.initLayers();
+
+    // }
+
+            
     }
   
     
