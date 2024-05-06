@@ -23,7 +23,6 @@ import { Helles_Events, BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
 import MainMenu from "./mainMenu";
-import * as fs from 'fs';
 
 export default class GameLevel extends Scene {
 
