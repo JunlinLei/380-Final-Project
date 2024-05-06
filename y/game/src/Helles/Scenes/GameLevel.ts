@@ -39,8 +39,8 @@ export default class GameLevel extends Scene {
     private playerinvicibleTime: number = 0;
     private playerinvicibleMAXTIME: number = 1;
     private playerinvicibleEndTime: number = 0;
-    protected playerMana: number = 2 ;
-    protected playerMaxMana: number = 2; 
+    protected playerMana: number = 3 ;
+    protected playerMaxMana: number = 3; 
  
     protected enemyHealth: number = 5;
     //Labels for the gui
@@ -484,6 +484,17 @@ export default class GameLevel extends Scene {
                                 console.log("player damage " + this.playerDamage);
                                 (<PlayerController>this.player._ai).damage += 1;
                                 this.attackDamage.text = "attack : " + (<PlayerController>this.player._ai).damage
+                            }
+                        
+                        if((<Sprite>other).imageId === "manaPotion")
+                            {
+                            console.log("manaPotion")
+                            if(this.playerMana != this.playerMaxMana)
+                                {
+                                            this.playerMana = this.playerMana + 1;
+                                            this.manaLabel.size.set((this.playerMana / this.playerMaxMana) * this.manaLabelBrd.size.x, this.manaLabel.size.y);
+                                            this.manaLabel.position.set(this.manaLabelBrd.position.x - ((this.playerMaxMana - this.playerMana) / this.playerMaxMana) * this.manaLabelBrd.size.x / 4, this.manaLabelBrd.position.y)
+                                }
                             }
                             
 
