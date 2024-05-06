@@ -43,6 +43,11 @@ export default class Idle extends OnGround {
 				this.finished(PlayerStates.ATTACK);
 				this.parent.attackTimer.start();
 			}
+		if(Input.isJustPressed("skill") && this.parent.attackTimer.isStopped())
+			{
+				this.finished(PlayerStates.SKILLATTACK);
+				this.parent.attackTimer.start();
+			}
 		
 		this.parent.velocity.x = 0;
 

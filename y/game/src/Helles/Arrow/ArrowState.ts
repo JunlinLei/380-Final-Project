@@ -15,6 +15,7 @@ export default abstract class ArrowState extends State {
     constructor(parent:StateMachine, owner:GameNode){
         super(parent)
         this.owner = owner
+        this.parent.initPos = this.owner.position.x;
     }
 
     handleInput(event: GameEvent): void {

@@ -18,6 +18,9 @@ export default class ArrowController extends StateMachineAI{
     speed: number = 400;
 
     direction : number = 1 ; 
+    initPos : number ; 
+    updatePos : number;
+
     initializeAI(owner: GameNode,  options: Record<string, any>): void {
         this.owner = owner; 
         this.receiver.subscribe(Helles_Events.PLAYER_ATTACK);
@@ -26,6 +29,7 @@ export default class ArrowController extends StateMachineAI{
         this.addState(ArrowStates.MOVE, move);
         this.direction = options.direction;
         this.initialize(ArrowStates.MOVE)
+        
     }
 
     changeState(state: string): void {

@@ -35,6 +35,17 @@ export default class Level5 extends GameLevel{
 
     unloadScene(): void {
         //Have not decide what resource to keep for now 
+        this.load.keepAudio("shoot")
+        this.load.keepAudio("enemy_get_hit")
+        this.load.keepImage("arrow")
+        this.load.keepImage("key")
+        this.load.keepImage("fireball")
+        this.load.keepImage("flame")
+        this.load.keepImage("healthPotion")
+        this.load.keepImage("damageUp")
+        this.load.keepImage("wave")
+        this.load.keepImage("manaPotion")
+
     }
 
     startScene(): void {
@@ -46,6 +57,8 @@ export default class Level5 extends GameLevel{
         this.viewport.setBounds(0,0, 64*32,64*32);
 
         this.playerSpawn = new Vec2(4*32, 24*32)
+
+        this.playerDamage = this.sceneOptions.physics.damage;
 
         super.startScene();
 

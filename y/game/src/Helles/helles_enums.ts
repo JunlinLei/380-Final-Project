@@ -12,7 +12,9 @@ export enum Helles_Events {
     MONSTER_ATTACK = "MonsterAttack",
     DAMAGE_ANIMATION = "DamgeAnimation",
     PLAYER_PICK_KEY = "playerPickKey",
-    MONSTER_DYING = "MonsterDying"
+    MONSTER_DYING = "MonsterDying",
+    SUMMON_MINIONS = "SummonMinions",
+    PLAYER_SKILL = "PlayerSkill"
 }
 
 

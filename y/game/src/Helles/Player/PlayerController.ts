@@ -18,6 +18,8 @@ import Timer from "../../Wolfie2D/Timing/Timer";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import TakeDamage from "./PlayerStates/TakeDamage";
 import Death from "./PlayerStates/Death";
+import SkillAttack from "./PlayerStates/SkillAttack";
+import InAirSkill from "./PlayerStates/InAirSkill";
 
 
 export enum PlayerType {
@@ -35,7 +37,9 @@ export enum PlayerStates {
     ATTACK = "attack",
     INAIRATTACK = "inairattack",
     TAKEDAMAGE = "takedamage",
-    DEATH = "death"
+    DEATH = "death",
+    SKILLATTACK = "skillAttack",
+    INAIRSKILL = "inAirSkill"
 }
 
 export default class PlayerController extends StateMachineAI{
@@ -55,6 +59,7 @@ export default class PlayerController extends StateMachineAI{
     damage : number = 1;
     initJumpPos : number; 
     currJumpPOs : number;
+    isAirJump : boolean = false; 
 
     initializeAI(owner: GameNode, options: Record<string, any>): void {
         this.owner = owner;
@@ -65,6 +70,7 @@ export default class PlayerController extends StateMachineAI{
         
         /**initial the health of the player */
         this.playerHealth = options.playerHealth;
+        this.damage = options.damage  
 
         this.receiver.subscribe(Helles_Events.PLAYER_DAMAGE);
         this.receiver.subscribe(Helles_Events.DAMAGE_ANIMATION)
@@ -97,6 +103,12 @@ export default class PlayerController extends StateMachineAI{
 
         let takedamage = new TakeDamage(this, this.owner);
         this.addState(PlayerStates.TAKEDAMAGE, takedamage)
+
+        let skillAttack = new SkillAttack(this,this.owner);
+        this.addState(PlayerStates.SKILLATTACK, skillAttack)
+
+        let inAirSkill = new InAirSkill(this,this.owner);
+        this.addState(PlayerStates.INAIRSKILL, inAirSkill);
 
         let death = new Death(this, this.owner);
         this.addState(PlayerStates.DEATH, death)
