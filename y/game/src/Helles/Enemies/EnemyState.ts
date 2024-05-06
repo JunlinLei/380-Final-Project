@@ -13,7 +13,6 @@ import EnemyController,{ EnemyStates } from "./EnemyController";
 export default abstract class EnemyState extends State {
 	owner: GameNode;
 	parent: EnemyController;
-	gravity: number = 500;
 	playerPosition:Vec2 = Vec2.ZERO;
 	shotPosition : string = null;
 	node: GameNode;
@@ -70,6 +69,10 @@ export default abstract class EnemyState extends State {
 
 				return distance;
 			}
+		if(this.parent.enemyType === "fly")
+			{
+				return distance;
+			}
 	}
 
 	update(deltaT: number): void {
@@ -91,7 +94,7 @@ export default abstract class EnemyState extends State {
 			// check the next position is still a platform
 
 		}
-		this.parent.velocity.y += this.gravity * deltaT;
+		this.parent.velocity.y += this.parent.gravity * deltaT;
 
 
 }

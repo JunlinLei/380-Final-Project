@@ -8,13 +8,15 @@ import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import Timer from "../../Wolfie2D/Timing/Timer";
 import Die from "./Die";
+import Chase from "./Chase";
 
 
 export enum EnemyStates {
 
 	IDLE = "idle",
 	AGGRO = "aggro",
-    DIE = "die"
+    DIE = "die",
+    CHASE = "chase"
 }
 
 export default class EnemyController extends StateMachineAI {
@@ -24,7 +26,7 @@ export default class EnemyController extends StateMachineAI {
     playerDirection : string; 
 	speed: number = 50;        //CHANGE THIS BACK TO SMALLER VALUE (50)
 	ySpeed: number = 0;
-	gravity: number = 1000;
+	gravity: number = 500;
     maxHealth: number; 
     enemyHealth: number;
     projTimer : Timer;
@@ -61,6 +63,9 @@ export default class EnemyController extends StateMachineAI {
         let die = new Die(this, owner);
         this.addState(EnemyStates.DIE, die);
 
+        let chase = new Chase(this, owner);
+        this.addState(EnemyStates.CHASE, chase);
+
 		this.direction = new Vec2(-1, 0);
         // default to idle state for beginning of level
 		this.initialize(EnemyStates.IDLE);
@@ -69,6 +74,14 @@ export default class EnemyController extends StateMachineAI {
         this.maxHealth = options.enemyHealth;
 
         this.enemyType = options.enemyType; 
+
+        if(options.enemyType === "fly")
+            {
+                console.log("fly enemy")
+                this.gravity = 0;
+                this.speed = 100;
+            }
+
 	}
 
 	changeState(stateName: string): void {
@@ -80,45 +93,50 @@ export default class EnemyController extends StateMachineAI {
         let enemyPosition = this.owner.position;
         let yEnemyPosition ;
 
-        if(this.enemyType === "lurker")
+        if(this.enemyType != "fly")
             {
-                 yEnemyPosition  = enemyPosition.y + 32 ;
-            }
 
-        else
-        {
-            yEnemyPosition  = enemyPosition.y + 64 ;
-        }
-
-        
-        let xrEnemyPosition = enemyPosition.x + 32;  
-        let xlEnemyPosition = enemyPosition.x - 32; 
-
-        this.botRightPosition.x= xrEnemyPosition;
-        this.botRightPosition.y = yEnemyPosition;
-
-        this.botLeftPosition.x = xlEnemyPosition;
-        this.botLeftPosition.y = yEnemyPosition;
-
-        let rightStandTile = this.tilemap.getColRowAt(this.botRightPosition);
-        let leftStandTile = this.tilemap.getColRowAt(this.botLeftPosition)
-        let tileValueRight = this.tilemap.getTileAtRowCol(rightStandTile); 
-        let tileValueLeft = this.tilemap.getTileAtRowCol(leftStandTile); 
-        
-        // console.log("tile value: "+tileValueLeft);
-       
-            if ((tileValueRight === 0 || tileValueLeft === 0 ) && this.turnTimer.isStopped()) {
-               console.log("change direction")
-                if(this.direction.x == 1)
+                if(this.enemyType === "lurker")
                     {
-                        this.direction.x = - 1;
+                         yEnemyPosition  = enemyPosition.y + 32 ;
                     }
+        
                 else
                 {
-                    this.direction.x =  1;
+                    yEnemyPosition  = enemyPosition.y + 64 ;
                 }
-                this.turnTimer.start();
+        
+                
+                let xrEnemyPosition = enemyPosition.x + 32;  
+                let xlEnemyPosition = enemyPosition.x - 32; 
+        
+                this.botRightPosition.x= xrEnemyPosition;
+                this.botRightPosition.y = yEnemyPosition;
+        
+                this.botLeftPosition.x = xlEnemyPosition;
+                this.botLeftPosition.y = yEnemyPosition;
+        
+                let rightStandTile = this.tilemap.getColRowAt(this.botRightPosition);
+                let leftStandTile = this.tilemap.getColRowAt(this.botLeftPosition)
+                let tileValueRight = this.tilemap.getTileAtRowCol(rightStandTile); 
+                let tileValueLeft = this.tilemap.getTileAtRowCol(leftStandTile); 
+                
+                // console.log("tile value: "+tileValueLeft);
+               
+                    if ((tileValueRight === 0 || tileValueLeft === 0 ) && this.turnTimer.isStopped()) {
+                       console.log("change direction")
+                        if(this.direction.x == 1)
+                            {
+                                this.direction.x = - 1;
+                            }
+                        else
+                        {
+                            this.direction.x =  1;
+                        }
+                        this.turnTimer.start();
+                    }
             }
+
         
 	}
 }

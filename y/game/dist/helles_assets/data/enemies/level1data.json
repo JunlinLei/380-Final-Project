@@ -6,14 +6,16 @@
     "miniBoss": [
         [704,256]
     ], 
-    "player-spawn": [100,220],
+    "fly": [
+        [1000,100]
+    ],
 
     "wraiths": [
       
         [1920,160]
     ],
     "monsterHealth":[
-        [2, 4, 5]
+        [2, 4, 5, 2]
     ],
     "manaPosition":[
         [576, 96]

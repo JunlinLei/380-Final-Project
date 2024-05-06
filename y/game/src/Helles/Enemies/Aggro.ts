@@ -1,9 +1,9 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2"
-import GameEvent from "../../Wolfie2D/Events/GameEvent";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import { Helles_Events } from "../helles_enums";
 import { EnemyStates } from "./EnemyController";
 import EnemyState from "./EnemyState";
+
 
 export default class Idle extends EnemyState {
 	// doing nothing as of now
@@ -18,11 +18,11 @@ export default class Idle extends EnemyState {
 	update(deltaT: number): void {
 		super.update(deltaT);
 
-		
 
 		let distance = this.tileDistance();
         let tileDistance = Math.sqrt(32*32 +32*32);
 		let direction = new Vec2(0,0);
+	
 
 		// if(!(<AnimatedSprite>this.owner).animation.isPlaying("ATTACK"))
 		// 	{

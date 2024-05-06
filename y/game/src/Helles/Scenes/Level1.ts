@@ -1,10 +1,14 @@
+import PositionGraph from "../../Wolfie2D/DataTypes/Graphs/PositionGraph";
+import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import Debug from "../../Wolfie2D/Debug/Debug";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
+import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
+import Navmesh from "../../Wolfie2D/Pathfinding/Navmesh";
+import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
 import Level2 from "./Level2"
-import * as fs from 'fs'
 export default class Level1 extends GameLevel{
 
 
@@ -32,6 +36,7 @@ export default class Level1 extends GameLevel{
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         this.load.spritesheet("wraith", "helles_assets/spritesheets/wraith.json")
+        this.load.spritesheet("fly", "helles_assets/spritesheets/fly.json")
         // load background image 
 
         //add other monster and music later on 
@@ -80,7 +85,6 @@ export default class Level1 extends GameLevel{
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
     }
-
   
     
 

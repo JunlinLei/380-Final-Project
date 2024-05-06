@@ -53,6 +53,9 @@ export default class GameLevel extends Scene {
     protected arrows: Sprite;
     protected enemyProj: Sprite;
     protected projTimer: Timer;
+    protected firstArrowTimer : Timer ; 
+    protected secondArrowTimer : Timer ; 
+
 
     // Stuff to end the level and go to the next level
     protected levelEndArea: Rect;
@@ -144,10 +147,16 @@ export default class GameLevel extends Scene {
                                 firstArrow.set(position.x + 48 , position.y-16)
                                 secondArrow.set(position.x+32, position.y)
                                 thirdArrow.set(position.x+16, position.y+16)
+                                this.firstArrowTimer = new Timer(100,()=>{
+                                    this.spawnArrow(secondArrow, dirction);
+                                })
+                                this.secondArrowTimer = new Timer(200,()=>{
+                                    this.spawnArrow(thirdArrow, dirction);
+                                })
                                 this.spawnArrow(firstArrow, dirction);
-                                this.spawnArrow(secondArrow, dirction);
-                                this.spawnArrow(thirdArrow, dirction);
-        
+                                this.firstArrowTimer.start()
+                                this.secondArrowTimer.start();
+                                
                                 this.playerMana = this.playerMana - 1;
                                 this.manaLabel.size.set((this.playerMana / this.playerMaxMana) * this.manaLabelBrd.size.x, this.manaLabel.size.y);
                                 this.manaLabel.position.set(this.manaLabelBrd.position.x - ((this.playerMaxMana - this.playerMana) / this.playerMaxMana) * this.manaLabelBrd.size.x / 4, this.manaLabelBrd.position.y)
@@ -619,6 +628,23 @@ export default class GameLevel extends Scene {
                 }
             }
         
+        if (data.fly&&data.monsterHealth) {
+            let fly = data.fly;
+            let health = data.monsterHealth
+            for (let i = 0; i < data.miniBoss.length;i ++) {
+                let npc = this.add.animatedSprite("fly", "primary");
+                npc.position.set(fly[i][0], fly[i][1]);
+                npc.scale.set(0.5,0.5)
+                npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 16)), null, false);
+                npc.animation.play("IDLE");
+                npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+                npc.setGroup("enemy");
+                // send player position
+                npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: health[0][3], enemyType: "fly" });// 
+                npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+            }
+        }
+
         if (data.miniBoss&&data.monsterHealth) {
             let miniBoss = data.miniBoss;
             let health = data.monsterHealth
@@ -762,7 +788,7 @@ export default class GameLevel extends Scene {
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
             }
         
-        else if (enemyType === "wraith")
+        else if (enemyType === "wraith" || enemyType === "fly")
             {
                 this.enemyProj = this.add.sprite("fireball", "primary")
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 16)));
@@ -873,9 +899,5 @@ export default class GameLevel extends Scene {
             this.playerinvincible = false;
         }
     }
-
-    // protected dyingTimer(timer:Timer, node: GameNode){
-    //     if(timer.isStopped)
-    // }
 
 }
