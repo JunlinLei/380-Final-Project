@@ -32,11 +32,10 @@ export default class Level2 extends GameLevel{
         // load background image for level 1
         // this.load.image("trees", "helles_assets/images/Reverse_forrest.jpg");
 
+        this.load.audio("level2_music", "helles_assets/music/level2.mp3")
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
-        this.load.spritesheet("fly", "helles_assets/spritesheets/fly.json")
-
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
    
@@ -57,6 +56,9 @@ export default class Level2 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level2_music"})
 
     }
 
@@ -82,6 +84,7 @@ export default class Level2 extends GameLevel{
         // TODO specify next level
         this.nextLevel = Level3;
 
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level2_music", loop:true,holdReference: true})
 
     }
 

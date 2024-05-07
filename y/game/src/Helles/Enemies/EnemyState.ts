@@ -69,7 +69,7 @@ export default abstract class EnemyState extends State {
 
 				return distance;
 			}
-		if(this.parent.enemyType === "fly")
+		if(this.parent.enemyType === "fly" || this.parent.enemyType === "flyBoss")
 			{
 				return distance;
 			}

@@ -75,7 +75,7 @@ export default class EnemyController extends StateMachineAI {
 
         this.enemyType = options.enemyType; 
 
-        if(options.enemyType === "fly")
+        if(options.enemyType === "fly" || options.enemyType === "flyBoss")
             {
                 console.log("fly enemy")
                 this.gravity = 0;
@@ -95,17 +95,17 @@ export default class EnemyController extends StateMachineAI {
 
         if(this.enemyType != "fly")
             {
-
                 if(this.enemyType === "lurker")
                     {
-                         yEnemyPosition  = enemyPosition.y + 32 ;
+                        yEnemyPosition  = enemyPosition.y + 32 ;
                     }
-        
+                
                 else
                 {
                     yEnemyPosition  = enemyPosition.y + 64 ;
                 }
-        
+                
+                    
                 
                 let xrEnemyPosition = enemyPosition.x + 32;  
                 let xlEnemyPosition = enemyPosition.x - 32; 
@@ -135,6 +135,7 @@ export default class EnemyController extends StateMachineAI {
                         }
                         this.turnTimer.start();
                     }
+                    
             }
 
         

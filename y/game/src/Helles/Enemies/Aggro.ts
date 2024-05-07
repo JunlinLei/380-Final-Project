@@ -22,14 +22,22 @@ export default class Idle extends EnemyState {
 		let distance = this.tileDistance();
         let tileDistance = Math.sqrt(32*32 +32*32);
 		let direction = new Vec2(0,0);
+
+		let normalized_dir = new Vec2(0,0);
+
+		let dirVector : Vec2 = Vec2.ZERO; 
 	
+		if(this.parent.enemyType === "flyBoss")
+			{
+				dirVector = this.owner.position.dirTo(this.playerPosition);
+				normalized_dir = dirVector.normalized()
+				this.parent.velocity.x = normalized_dir.x * this.parent.speed ;
+				this.parent.velocity.y = normalized_dir.y * this.parent.speed ;
+				
+				this.owner.move(this.parent.velocity.scale(deltaT))
+			}
 
-		// if(!(<AnimatedSprite>this.owner).animation.isPlaying("ATTACK"))
-		// 	{
 
-				// check if distance is between 10 tiles 
-				// console.log(distance)
-		// (<AnimatedSprite>this.owner).animation.playIfNotAlready("ATTACK", false);
 				if(distance <= 10 * tileDistance ) // original 10
 				{	
 					if(this.playerPosition.y < this.owner.position.y + 32 && this.playerPosition. y > this.owner.position.y -32 && this.playerPosition.x > this.owner.position.x )
@@ -79,7 +87,7 @@ export default class Idle extends EnemyState {
 
 				let percentHealth : number;
 				percentHealth = this.parent.enemyHealth/this.parent.maxHealth;
-				if(percentHealth <= 0.5 && this.parent.isMinionsSummon === false && this.parent.enemyType === "miniBoss")
+				if(percentHealth <= 0.5 && this.parent.isMinionsSummon === false && (this.parent.enemyType === "miniBoss" || this.parent.enemyType === "flyBoss"))
 					{
 						this.parent.isMinionsSummon = true; 
 						this.emitter.fireEvent(Helles_Events.SUMMON_MINIONS, {position: this.owner.position})

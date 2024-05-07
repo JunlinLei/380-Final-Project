@@ -4,6 +4,7 @@ import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 // import { HW5_Color } from "../hw5_color";
 import GameLevel from "./GameLevel";
 import Level1 from "./Level1"
+import Level6 from "./Level6";
 
 export default class Level5 extends GameLevel{
 
@@ -15,12 +16,12 @@ export default class Level5 extends GameLevel{
         this.load.object("levelData", "helles_assets/data/enemies/level5data.json") 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
-        this.load.image("arrow","helles_assets/spritesheets/arrow.png")
-        this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
-        this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
-        this.load.image("flame", "helles_assets/spritesheets/flame.png")
-        this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
-        this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+        // this.load.image("arrow","helles_assets/spritesheets/arrow.png")
+        // this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
+        // this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
+        // this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        // this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
+        // this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
@@ -45,7 +46,8 @@ export default class Level5 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
-
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
     }
 
     startScene(): void {
@@ -66,7 +68,7 @@ export default class Level5 extends GameLevel{
        
        
         // TODO specify next level
-        this.nextLevel = Level1;
+        this.nextLevel = Level6;
 
 
     }

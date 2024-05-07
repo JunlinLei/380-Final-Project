@@ -44,7 +44,7 @@ export default class Level1 extends GameLevel{
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
         this.load.image("wave", "helles_assets/spritesheets/wave.png")
         this.load.image("manaPotion", "helles_assets/spritesheets/manaPotion.png")
-
+        this.load.image("portal", "helles_assets/spritesheets/portal.png")
         // TODO add another projectile image with high contrast
         
         //add other monster and music later on 
@@ -76,7 +76,9 @@ export default class Level1 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
-        
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level1_music"})
     }
 
     startScene(): void {
@@ -99,7 +101,6 @@ export default class Level1 extends GameLevel{
         this.nextLevel = Level2;
 
         this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level1_music", loop:true,holdReference: true})
-        
     }
 
     updateScene(deltaT: number): void {

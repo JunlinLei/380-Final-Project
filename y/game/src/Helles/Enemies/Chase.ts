@@ -24,8 +24,7 @@ export default class Chase extends EnemyState {
 				normalized_dir = dirVector.normalized()
 				this.parent.velocity.x = normalized_dir.x * this.parent.speed ;
 				this.parent.velocity.y = normalized_dir.y * this.parent.speed ;
-				console.log("velocity")
-				console.log(this.parent.velocity)
+				
 				this.owner.move(this.parent.velocity.scale(deltaT))
 			}
         let distance = this.tileDistance();

@@ -57,7 +57,7 @@ export default class GameLevel extends Scene {
     protected secondArrowTimer : Timer ; 
 
     // Stuff to end the level and go to the next level
-    protected levelEndArea: Rect;
+    protected levelEndArea: Sprite;
     protected nextLevel: new (...args: any) => GameLevel;
     protected levelEndTimer: Timer;
     protected levelEndLabel: Label;
@@ -109,14 +109,13 @@ export default class GameLevel extends Scene {
 
         //disable player movement first 
         // Input.disableInput();
-
+        // this.player.freeze();
     }
 
     updateScene(deltaT: number): void {
 
         this.handleTimers(deltaT);
-
-
+        
         while (this.receiver.hasNextEvent()) {
             let event = this.receiver.getNextEvent();
             switch (event.type) {
@@ -217,7 +216,7 @@ export default class GameLevel extends Scene {
                                                 this.spawnItem("healthPotion",position);
                                             }
 
-                                        if(enemy.enemyType === "miniBoss")
+                                        if(enemy.enemyType === "miniBoss" || enemy.enemyType === "flyBoss")
                                             {
                                                 this.spawnItem("key", enemy.owner.position)
                                             }
@@ -276,7 +275,7 @@ export default class GameLevel extends Scene {
                                                 this.spawnItem("healthPotion",position);
                                             }
 
-                                        if(enemy.enemyType === "miniBoss")
+                                        if(enemy.enemyType === "miniBoss"|| enemy.enemyType === "flyBoss")
                                             {
                                                 this.spawnItem("key", position)
                                             }
@@ -320,7 +319,7 @@ export default class GameLevel extends Scene {
                         let secondProj: Vec2 = new Vec2(0, 0);
                         let thirdProj: Vec2 = new Vec2(0, 0);
 
-                        if(enemyType === "wraith" || enemyType === "miniBoss")
+                        if(enemyType === "wraith" || enemyType === "miniBoss" || enemyType === "flyBoss")
                             {
                                 if (shotPosition === "sameLevelRight" || shotPosition === "upperRight")
                                     {
@@ -520,13 +519,13 @@ export default class GameLevel extends Scene {
 
                         firstPosition.set(position.x+32 , position.y)
                         secondPosition.set(position.x+64 , position.y)
-                        thirdPosition.set(position.x-32 , position.y)
-                        fouthPosition.set(position.x-64 , position.y)
+                        thirdPosition.set(position.x , position.y -32)
+                        fouthPosition.set(position.x , position.y - 64)
 
                         this.spawnEnemy(firstPosition, "lurker")
                         this.spawnEnemy(secondPosition, "lurker")
-                        this.spawnEnemy(thirdPosition, "lurker")
-                        this.spawnEnemy(fouthPosition, "lurker")
+                        this.spawnEnemy(thirdPosition, "fly")
+                        this.spawnEnemy(fouthPosition, "fly")
                         
                     }
                 break;
@@ -630,7 +629,7 @@ export default class GameLevel extends Scene {
         if (data.fly&&data.monsterHealth) {
             let fly = data.fly;
             let health = data.monsterHealth
-            for (let i = 0; i < data.miniBoss.length;i ++) {
+            for (let i = 0; i < data.fly.length;i ++) {
                 let npc = this.add.animatedSprite("fly", "primary");
                 npc.position.set(fly[i][0], fly[i][1]);
                 npc.scale.set(0.5,0.5)
@@ -660,6 +659,23 @@ export default class GameLevel extends Scene {
             }
         }
 
+        if (data.flyBoss&&data.monsterHealth) {
+            let flyBoss = data.flyBoss;
+            let health = data.monsterHealth
+            for (let i = 0; i < data.flyBoss.length;i ++) {
+                let npc = this.add.animatedSprite("fly", "primary");
+                npc.position.set(flyBoss[i][0], flyBoss[i][1]);
+                // npc.scale.set(0.5,0.5)
+                npc.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+                npc.animation.play("IDLE");
+                npc.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
+                npc.setGroup("enemy");
+                // send player position
+                npc.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: health[0][2], enemyType: "flyBoss" });// 
+                npc.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
+            }
+        }
+
     }
 
     protected initItem():void{
@@ -681,7 +697,15 @@ export default class GameLevel extends Scene {
         let enemy = this.add.animatedSprite(enemyType, "primary");
         enemy.position.set(position.x, position.y)
 
-        enemy.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+        if(enemyType === "fly")
+            {
+                enemy.scale.set(0.5,0.5)
+                enemy.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 16)), null, false);
+            }
+        else
+        {
+            enemy.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 32)), null, false);
+        }
         enemy.animation.play("IDLE");
         enemy.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
         enemy.setGroup("enemy");
@@ -798,7 +822,7 @@ export default class GameLevel extends Scene {
                 this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 16)));
                 this.enemyProj.scale.set(0.4,0.4)
             }
-        else if (enemyType === "miniBoss")
+        else if (enemyType === "miniBoss" || enemyType === "flyBoss")
                 {
                     this.enemyProj = this.add.sprite("wave", "primary")
                     this.enemyProj.addPhysics(new AABB(Vec2.ZERO, new Vec2(32, 48)));
@@ -827,11 +851,12 @@ export default class GameLevel extends Scene {
     }
 
     protected addLevelEnd(startingTile: Vec2, size: Vec2): void {
-        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, "primary",
-            { position: startingTile.scale(32), size: size.scale(32) });
+        this.levelEndArea = this.add.sprite("portal", "primary")
+        this.levelEndArea.position.set (startingTile.x*32, startingTile.y*32);
+        this.levelEndArea.scale.set(2,2)
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
         this.levelEndArea.setTrigger("player", Helles_Events.PLAYER_ENTERED_LEVEL_END, null);
-        this.levelEndArea.color = new Color(20, 200, 40, 1);
+        
     }
 
     //respawn the player 
