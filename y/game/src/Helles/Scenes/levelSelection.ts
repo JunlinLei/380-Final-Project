@@ -10,6 +10,7 @@ import Level2 from "./Level2";
 import Level3 from "./Level3";
 import Level4 from "./Level4";
 import Level5 from "./Level5";
+import Level6 from "./Level6";
 import Input from "../../Wolfie2D/Input/Input";
 import Layer from "../../Wolfie2D/Scene/Layer";
 
@@ -166,7 +167,7 @@ export default class LevelSelection extends Scene {
                 this.sceneManager.changeToScene(Level5, {}, this.sceneOptions)
             }
             this.lvl6.onClick = () => {
-                this.sceneManager.changeToScene(Level5, {}, this.sceneOptions)
+                this.sceneManager.changeToScene(Level6, {}, this.sceneOptions)
             }
         }
 
@@ -227,9 +228,8 @@ export default class LevelSelection extends Scene {
         else {
             this.lvl6.text = "Motlen Lava"
             this.lvl6.onClick = () => {
-                this.sceneManager.changeToScene(Level5, {}, this.sceneOptions)
+                this.sceneManager.changeToScene(Level6, {}, this.sceneOptions)
             }
         }
-        console.log(this.sceneOptions)
     }
 }
