@@ -15,7 +15,12 @@ import MainMenu from "./Helles/Scenes/mainMenu";
             {name: "jump", keys: ["w", "k"]},
             {name: "attack", keys: [ "j"]},
             {name: "skill", keys: ["q"]},
-            {name: "pick", keys: ["e"]}
+            {name: "pick", keys: ["e"]},
+            {name: "unlockLevels",keys:["z"]},
+            {name: "MaxAttack",keys:["x"]},
+            {name: "MaxHealth",keys:["c"]},
+            {name: "Pause",keys:["n"]},
+            {name: "Exit",keys:["m"]}
         ],
         useWebGL: false, 
         showDebug: false  

@@ -6,6 +6,7 @@ import GameLevel from "./GameLevel";
 import Level1 from "./Level1"
 import Level6 from "./Level6";
 
+
 export default class Level5 extends GameLevel{
 
     loadScene(): void {
@@ -29,8 +30,6 @@ export default class Level5 extends GameLevel{
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
         // enemy position data
-        
-
         
     }
 
@@ -60,7 +59,9 @@ export default class Level5 extends GameLevel{
 
         this.playerSpawn = new Vec2(4*32, 24*32)
 
-        this.playerDamage = this.sceneOptions.physics.damage;
+        if(this.sceneOptions.physics.damage != undefined){
+            this.playerDamage = this.sceneOptions.physics.damage;
+        }
 
         super.startScene();
 

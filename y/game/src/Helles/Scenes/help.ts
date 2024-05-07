@@ -86,10 +86,9 @@ export default class Help extends Scene {
 
         //List of all action
         const ControlText1 = [
-            "Ctrl + 1",
-            "Ctrl + 2",
-            "Ctrl + 3",
-            "Ctrl + 4"
+            "Z",
+            "X",
+            "C"
         ]
 
         //Display all action on control screen
@@ -100,10 +99,9 @@ export default class Help extends Scene {
         }
 
         const ControlText2 = [
-            "Open all the doors in the Map",
             "Unlock all the game levels",
-            "One shot monsters",
-            "Player die instantly"
+            "Max Player Attack",
+            "Max Player Health"
         ]
 
         //Display all action on control screen

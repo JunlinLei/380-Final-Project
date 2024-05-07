@@ -71,7 +71,7 @@ export default class PlayerController extends StateMachineAI{
         
         /**initial the health of the player */
         this.playerHealth = options.playerHealth;
-        this.damage = options.damage  + 9000
+        this.damage = options.damage;
 
         this.doorValue = options.door;
         console.log("player door value " + this.doorValue)

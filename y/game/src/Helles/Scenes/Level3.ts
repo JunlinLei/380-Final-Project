@@ -23,6 +23,7 @@ export default class Level3 extends GameLevel{
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+        this.load.image("wave", "helles_assets/spritesheets/wave.png")
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
@@ -30,8 +31,6 @@ export default class Level3 extends GameLevel{
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
         // enemy position data
-        
-
         
     }
 
@@ -63,7 +62,9 @@ export default class Level3 extends GameLevel{
 
         this.playerSpawn = new Vec2(3*32, 61*32)
 
-        this.playerDamage = this.sceneOptions.physics.damage;
+        if(this.sceneOptions.physics.damage != undefined){
+            this.playerDamage = this.sceneOptions.physics.damage;
+        }
 
         super.startScene();
 
