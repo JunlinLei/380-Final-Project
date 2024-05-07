@@ -11,7 +11,9 @@ export default class SceneOptions {
     physics: {
         groups: Array<string>,
         collisions: Array<Array<number>>,
-        damage : number
+        damage : number,
+        lvl:Array<boolean>,
+        currentlvl: number
     }
 
 
@@ -19,7 +21,7 @@ export default class SceneOptions {
         let sOpt = new SceneOptions();
 
         if(options.physics === undefined){
-            sOpt.physics = {groups: undefined, collisions: undefined, damage:undefined};
+            sOpt.physics = {groups: undefined, collisions: undefined, damage:undefined, lvl:undefined, currentlvl:undefined};
         } else {
             sOpt.physics = options.physics;
         }

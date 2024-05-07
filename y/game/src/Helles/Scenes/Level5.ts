@@ -5,6 +5,7 @@ import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 import GameLevel from "./GameLevel";
 import Level1 from "./Level1"
 
+
 export default class Level5 extends GameLevel{
 
     loadScene(): void {
@@ -21,6 +22,7 @@ export default class Level5 extends GameLevel{
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+        this.load.image("wave", "helles_assets/spritesheets/wave.png")
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
@@ -29,12 +31,20 @@ export default class Level5 extends GameLevel{
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
         // enemy position data
         
-
-        
     }
 
     unloadScene(): void {
         //Have not decide what resource to keep for now 
+        this.load.keepAudio("shoot")
+        this.load.keepAudio("enemy_get_hit")
+        this.load.keepImage("arrow")
+        this.load.keepImage("key")
+        this.load.keepImage("fireball")
+        this.load.keepImage("flame")
+        this.load.keepImage("healthPotion")
+        this.load.keepImage("damageUp")
+        this.load.keepImage("wave")
+        
     }
 
     startScene(): void {
@@ -47,7 +57,9 @@ export default class Level5 extends GameLevel{
 
         this.playerSpawn = new Vec2(4*32, 24*32)
 
-        this.playerDamage = this.sceneOptions.physics.damage;
+        if(this.sceneOptions.physics.damage != undefined){
+            this.playerDamage = this.sceneOptions.physics.damage;
+        }
 
         super.startScene();
 

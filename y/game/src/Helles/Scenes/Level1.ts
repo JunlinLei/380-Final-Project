@@ -71,6 +71,10 @@ export default class Level1 extends GameLevel{
         // behind first gate
         this.addLevelEnd(new Vec2(61, 16), new Vec2(2, 2));
         
+        if(this.sceneOptions.physics.damage != undefined){
+            this.playerDamage = this.sceneOptions.physics.damage;
+        }
+
         this.nextLevel = Level2;
         
     }
@@ -79,7 +83,5 @@ export default class Level1 extends GameLevel{
         super.updateScene(deltaT);
     }
 
-  
-    
 
 }
