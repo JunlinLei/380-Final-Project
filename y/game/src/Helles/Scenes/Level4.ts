@@ -23,14 +23,25 @@ export default class Level4 extends GameLevel{
         this.load.image("flame", "helles_assets/spritesheets/flame.png")
         this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
-
+        this.load.image("wave", "helles_assets/spritesheets/wave.png")
+        this.load.image("manaPotion", "helles_assets/spritesheets/manaPotion.png")
+        this.load.image("portal", "helles_assets/spritesheets/portal.png")
+        // TODO add another projectile image with high contrast
+        
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
-        this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
+        this.load.spritesheet("wraith", "helles_assets/spritesheets/wraith.json")
+        this.load.spritesheet("fly", "helles_assets/spritesheets/fly.json")
+        // load background image 
+
+        //add other monster and music later on 
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
-        // enemy position data
-        
+
+        //adding sound effect 
+        this.load.audio("shoot", "helles_assets/sound/arrow_shooting.mp3")
+        this.load.audio("enemy_get_hit", "helles_assets/sound/enemy_getting_hit.mp3")
+        this.load.audio("level1_music", "helles_assets/music/level1.mp3")
 
         
     }
@@ -63,9 +74,10 @@ export default class Level4 extends GameLevel{
         this.viewport.setBounds(0,0, 64*32,64*32);
 
         this.playerSpawn = new Vec2(6*32, 60*32)
-
-        this.playerDamage = this.sceneOptions.physics.damage;
-
+        
+        if(this.sceneOptions.physics.damage != undefined){
+            this.playerDamage = this.sceneOptions.physics.damage;
+        }
         super.startScene();
 
         this.addLevelEnd(new Vec2(60, 62), new Vec2(6, 6));

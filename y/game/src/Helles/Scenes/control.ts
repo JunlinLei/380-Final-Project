@@ -61,7 +61,6 @@ export default class Control extends Scene {
         const ControlText1 = [
             "Move Left",
             "Move Right",
-            "Pick Up",
             "Ability",
             "Attack",
             "Jump",
@@ -78,10 +77,9 @@ export default class Control extends Scene {
         const ControlText2 = [
             "A",
             "D",
-            "E",
             "Q",
             "J",
-            "K",
+            "K or W",
             "ESC"
         ]
 

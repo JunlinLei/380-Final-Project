@@ -16,6 +16,11 @@ export default class MainMenu extends Scene{
 
     private logoImage: Sprite;
     animatedSprite: AnimatedSprite;
+    
+    //locking stage of game level
+    protected lvl: Array<Boolean>
+    protected currentlvl: number
+
 
     loadScene(): void {
         // Load the menu song
@@ -40,8 +45,6 @@ export default class MainMenu extends Scene{
         
         // let center = this.viewport.getCenter();
         this.logoImage.position.set(size.x, size.y-220);
-
-
 
         // // We can also create game objects (such as graphics and UIElements) without using loaded assets
         // // Lets add a rectangle to use as the player object
@@ -91,39 +94,78 @@ export default class MainMenu extends Scene{
 
         // When the play button is clicked, go to the next scene
         playBtn.onClick = () => {
+            if(this.sceneOptions.physics.lvl == undefined||this.sceneOptions.physics.currentlvl ==undefined){
+                this.lvl = [true,false,false,false,false,false]
+                this.currentlvl = 0
             
-            let sceneOptions = {
-                physics: {
-                    groupNames: ["ground", "player", "arrow","enemy", "proj","item"],
-                    collisions:
-                    [
-                        [0, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 1, 1, 1],
-                        [1, 0, 0, 1, 0, 0],
-                        [1, 1, 1, 1, 0, 0],
-                        [1, 1, 0, 0, 0, 0],
-                        [1, 0, 0, 0 ,0, 0]
-                    ]
+                let sceneOptions = {
+                
+                    physics: {
+                        groupNames: ["ground", "player", "arrow","enemy", "proj","item"],
+                        collisions:
+                        [
+                            [0, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1],
+                            [1, 0, 0, 1, 0, 0],
+                            [1, 1, 1, 1, 0, 0],
+                            [1, 1, 0, 0, 0, 0],
+                            [1, 0, 0, 0 ,0, 0]
+                        ],
+                        lvl:this.lvl,
+                        currentlvl:this.currentlvl,
+                        damage:1
+                    },
                 }
+                this.sceneManager.changeToScene(Level1, {}, sceneOptions);
             }
-            this.sceneManager.changeToScene(Level1, {}, sceneOptions);
-        }
+            else{
+                this.sceneManager.changeToScene(Level1, {}, this.sceneOptions);
 
+            }
+        }
         LevelBtn.onClick = () => {
-            this.sceneManager.changeToScene(LevelSelection, {});
+            if(this.sceneOptions.physics.lvl == undefined||this.sceneOptions.physics.currentlvl ==undefined){
+                this.lvl = [true,false,false,false,false,false]
+                this.currentlvl = 0
+            
+                let sceneOptions = {
+                
+                    physics: {
+                        groupNames: ["ground", "player", "arrow","enemy", "proj","item"],
+                        collisions:
+                        [
+                            [0, 1, 1, 1, 1, 1],
+                            [1, 0, 0, 1, 1, 1],
+                            [1, 0, 0, 1, 0, 0],
+                            [1, 1, 1, 1, 0, 0],
+                            [1, 1, 0, 0, 0, 0],
+                            [1, 0, 0, 0 ,0, 0]
+                        ],
+                        lvl:this.lvl,
+                        currentlvl:this.currentlvl,
+                        damage:1
+                    },
+                }
+                this.sceneManager.changeToScene(LevelSelection, {}, sceneOptions);
+            }
+            else{
+                this.sceneManager.changeToScene(LevelSelection, {}, this.sceneOptions);
+
+            }
         }
 
         ControlBtn.onClick = () => {
-            this.sceneManager.changeToScene(Control, {});
+            this.sceneManager.changeToScene(Control, {},this.sceneOptions);
         }
 
         HelpBtn.onClick = () => {
-            this.sceneManager.changeToScene(Help, {});
+            this.sceneManager.changeToScene(Help, {},this.sceneOptions);
         }
 
 
         // Scene has started, so start playing music no music yet
         this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "themeMusic", loop: true, holdReference: true});
+    
     }
 
     unloadScene(): void {

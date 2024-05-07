@@ -8,6 +8,7 @@ import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 import Rect from "../../Wolfie2D/Nodes/Graphics/Rect";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
+import Button from "../../Wolfie2D/Nodes/UIElements/Button";
 import Label from "../../Wolfie2D/Nodes/UIElements/Label";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
 import Scene from "../../Wolfie2D/Scene/Scene";
@@ -22,6 +23,7 @@ import EnemyProjController from "../EnemyProj/EnemyProjController";
 import { Helles_Events, BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
+import GameOver from "./GameOver";
 import MainMenu from "./mainMenu";
 
 export default class GameLevel extends Scene {
@@ -32,7 +34,7 @@ export default class GameLevel extends Scene {
     protected respawnTimer: Timer;
 
     private playerHealth: number = 10;
-    protected playerDamage: number = 1 ;
+    protected playerDamage: number = 1;
     private playerMaxHealth: number = 10;
     private playerinvincible: boolean = false;
     private playerinvicibleTime: number = 0;
@@ -61,13 +63,28 @@ export default class GameLevel extends Scene {
     protected nextLevel: new (...args: any) => GameLevel;
     protected levelEndTimer: Timer;
     protected levelEndLabel: Label;
-    protected destoryNodeTimer : Timer;
+    protected destoryNodeTimer: Timer;
 
     protected levelTransitionScreen: Rect;
     protected levelTransitionTimer: Timer;
 
+    //stage of locked level
+    protected lvl: Array<Boolean> = new Array(6);
+    protected currentlvl: number
+    protected mainMenu: Label
+    protected unfreeze: Button
+    protected viewportsize: Vec2 = this.viewport.getHalfSize();
+
     //we first start scene 
     startScene(): void {
+
+        this.lvl = this.sceneOptions.physics.lvl
+        this.currentlvl = this.sceneOptions.physics.currentlvl
+        this.playerDamage = this.sceneOptions.physics.damage
+        //change the locking stage of the next level
+        if (this.currentlvl < 6) {
+            this.currentlvl = this.currentlvl + 1
+        }
 
         //game level standard initializations 
         this.initLayers();
@@ -95,7 +112,7 @@ export default class GameLevel extends Scene {
             // After the level end timer ends, fade to black and then go to the next scene
             this.levelTransitionScreen.tweens.play("fadeIn");
         });
-        this.destoryNodeTimer= new Timer(1000);
+        this.destoryNodeTimer = new Timer(1000);
         /* ##### DO NOT MODIFY ##### */
         // Create a background layer
         // this.addLayer("background", 0);
@@ -116,6 +133,40 @@ export default class GameLevel extends Scene {
 
         this.handleTimers(deltaT);
         
+        //cheat code Max attack
+        if(Input.isJustPressed("MaxAttack")){
+            this.playerDamage = 999;
+            (<PlayerController>this.player._ai).damage = 999;
+            this.attackDamage.text = "attack : " + (<PlayerController>this.player._ai).damage
+        }
+
+        if(Input.isJustPressed("MaxHealth")){
+            this.playerHealth = this.playerMaxHealth
+            this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
+            this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
+        }
+
+        if(Input.isJustPressed("Pause")){
+            console.log("pause")
+            if(!this.player.frozen){
+                this.viewportsize = this.viewport.getView().center;
+                this.mainMenu = <Label>this.add.uiElement(UIElementType.LABEL, "Main", { position: this.viewportsize, text: "Pause. Press N to continue the game Or M to main menu" });
+                this.mainMenu.textColor = Color.WHITE;
+                this.mainMenu.fontSize = 35;
+                this.freezeAllSprite();
+                this.player.freeze()
+            }
+            else{
+                this.unfreezeAllSprite();
+                this.player.unfreeze();
+                this.remove(this.mainMenu);
+            }
+        }
+        if(Input.isJustPressed("Exit")&&this.player.frozen){
+            this.sceneManager.changeToScene(MainMenu,{}, this.sceneOptions)
+        }
+
+
         while (this.receiver.hasNextEvent()) {
             let event = this.receiver.getNextEvent();
             switch (event.type) {
@@ -126,7 +177,7 @@ export default class GameLevel extends Scene {
                         let dirction = event.data.get("direction")
 
                         this.spawnArrow(position, dirction);
-                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "shoot", loop: false, holdReference: false})
+                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: "shoot", loop: false, holdReference: false })
 
                     }
                     break;
@@ -172,8 +223,8 @@ export default class GameLevel extends Scene {
                     {
                         let node = <Sprite>this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
-                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
-                        
+                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: "enemy_get_hit", loop: false, holdReference: false })
+
                         // this.emitter.fireEvent(Helles_Events.PLAYER_ENTERED_LEVEL_END);
                         if (node && other) {
 
@@ -183,57 +234,52 @@ export default class GameLevel extends Scene {
                                 node.destroy();
                                 let enemy = (<EnemyController>other._ai);
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
-                                let position :Vec2 = Vec2.ZERO
+                                let position: Vec2 = Vec2.ZERO
                                 position = enemy.owner.position.clone();
-                                if(enemy.enemyHealth > 0)
-                                    {
-                                        enemy.damageTimer = new Timer(1000, ()=>{
-                                            (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
-                                        })
+                                if (enemy.enemyHealth > 0) {
+                                    enemy.damageTimer = new Timer(1000, () => {
+                                        (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                    })
 
-                                        if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
-                                            // The player has reached the end of the level
-                                            enemy.damageTimer.start();
-                                            (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+                                    if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                        // The player has reached the end of the level
+                                        enemy.damageTimer.start();
+                                        (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
 
-                                        }                     
                                     }
+                                }
 
                                 // (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false);
-                                
+
                                 //console.log(enemy.enemyHealth);
-                                
+
                                 if (enemy.enemyHealth <= 0) {
-                                    enemy.dyingTimer = new Timer(1000, ()=>{
-                                        if(enemy.enemyType === "wraith")
-                                            {
+                                    enemy.dyingTimer = new Timer(1000, () => {
+                                        if (enemy.enemyType === "wraith") {
 
-                                                this.spawnItem("damageUp",position);
-                                            }
-
-                                        if (enemy.enemyType === "lurker")
-                                            {
-                                                this.spawnItem("healthPotion",position);
-                                            }
-
-                                        if(enemy.enemyType === "miniBoss" || enemy.enemyType === "flyBoss")
-                                            {
-                                                this.spawnItem("key", enemy.owner.position)
-                                            }
-                                        
-                                        if(other)
-                                            {
-                                                console.log(other)
-                                                other.destroy();
-                                            }
-                                        })
-                                        if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
-                                            // The player has reached the end of the level
-                                            enemy.dyingTimer.start();
-                                            (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
-                                            (<AnimatedSprite>enemy.owner).disablePhysics();
+                                            this.spawnItem("damageUp", position);
                                         }
-                                            
+
+                                        if (enemy.enemyType === "lurker") {
+                                            this.spawnItem("healthPotion", position);
+                                        }
+
+                                        if(enemy.enemyType === "miniBoss" || enemy.enemyType === "flyBoss"){
+                                            this.spawnItem("key", enemy.owner.position)
+                                        }
+
+                                        if (other) {
+                                            console.log(other)
+                                            other.destroy();
+                                        }
+                                    })
+                                    if (!enemy.dyingTimer.hasRun() && enemy.dyingTimer.isStopped()) {
+                                        // The player has reached the end of the level
+                                        enemy.dyingTimer.start();
+                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false, "IDLE");
+                                        (<AnimatedSprite>enemy.owner).disablePhysics();
+                                    }
+
                                 }
                             }
                             else {
@@ -243,37 +289,29 @@ export default class GameLevel extends Scene {
                                 console.log((<PlayerController>this.player._ai).damage)
                                 console.log(enemy)
                                 enemy.enemyHealth = enemy.enemyHealth - (<PlayerController>this.player._ai).damage;
-                                let position :Vec2 = Vec2.ZERO
-                                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "enemy_get_hit", loop: false, holdReference: false})
+                                let position: Vec2 = Vec2.ZERO
+                                this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: "enemy_get_hit", loop: false, holdReference: false })
                                 position = enemy.owner.position.clone();
-                                console.log(enemy.enemyHealth);
-                                if(enemy.enemyHealth > 0)
-                                    {
-                                        enemy.damageTimer = new Timer(1000, ()=>{
-                                            (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
-                                        })
-        
-                                        if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
-                                            // The player has reached the end of the level
-                                            enemy.damageTimer.start();
-                                            (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
-                                           
-                                        } 
+                                if (enemy.enemyHealth > 0) {
+                                    enemy.damageTimer = new Timer(1000, () => {
+                                        (<AnimatedSprite>enemy.owner).animation.play("IDLE", false)
+                                    })
+
+                                    if (!enemy.damageTimer.hasRun() && enemy.damageTimer.isStopped()) {
+                                        // The player has reached the end of the level
+                                        enemy.damageTimer.start();
+                                        (<AnimatedSprite>enemy.owner).animation.play("TAKING_DAMAGE", false)
+
                                     }
-                                console.log(enemy.enemyHealth);
+                                }
+                                //console.log(enemy.enemyHealth);
                                 if (enemy.enemyHealth <= 0) {
-                                   console.log("spawn item")
-                                    enemy.dyingTimer = new Timer(1000, ()=>{
-                                        if(enemy.enemyType === "wraith")
-                                            {
 
-                                                this.spawnItem("damageUp",position);
-                                            }
+                                    enemy.dyingTimer = new Timer(1000, () => {
+                                        if (enemy.enemyType === "wraith") {
 
-                                        if (enemy.enemyType === "lurker")
-                                            {
-                                                this.spawnItem("healthPotion",position);
-                                            }
+                                            this.spawnItem("damageUp", position);
+                                        }
 
                                         if(enemy.enemyType === "miniBoss"|| enemy.enemyType === "flyBoss")
                                             {
@@ -291,12 +329,12 @@ export default class GameLevel extends Scene {
                                         // The player has reached the end of the level
                                         console.log("** reached end of level **");
                                         enemy.dyingTimer.start();
-                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false,"IDLE");
+                                        (<AnimatedSprite>enemy.owner).animation.play("DYING", false, "IDLE");
                                         (<AnimatedSprite>enemy.owner).disablePhysics();
                                     }
-                                  
+
                                     // this.emitter.fireEvent(Helles_Events.MONSTER_DYING, {eventData:<GameNode>node})
-                                    
+
                                 }
                             }
                         }
@@ -332,8 +370,9 @@ export default class GameLevel extends Scene {
                                     }
                             }
 
-                        else
-                        {
+
+
+                        else {
 
                             if (shotPosition === "sameLevelRight" || shotPosition === "upperRight") {
                                 firstProj.set(position.x + 16, position.y - 16)
@@ -349,7 +388,7 @@ export default class GameLevel extends Scene {
 
 
                         if (enemy.projTimer.isStopped()) {
-                            (<AnimatedSprite>enemy.owner).animation.play("ATTACK", false,"IDLE");
+                            (<AnimatedSprite>enemy.owner).animation.play("ATTACK", false, "IDLE");
                             this.spawnProj(firstProj, direction, enemyType);
                             this.spawnProj(secondProj, direction, enemyType);
                             this.spawnProj(thirdProj, direction, enemyType);
@@ -364,21 +403,21 @@ export default class GameLevel extends Scene {
 
                         let node = event.data.get("node");
                         let other = event.data.get("other");
-                        console.log("node is player?: " +( node === this.player));
+                        console.log("node is player?: " + (node === this.player));
                         // console.log("other: " + other)
-                        console.log("other is player?: " +( other === this.player));
-                        if (node === this.player){
+                        console.log("other is player?: " + (other === this.player));
+                        if (node === this.player) {
                             // console.log("if")
                             console.log("player")
-                           this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE,{node : node, other: other})
-                            }
-                        
+                            this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE, { node: node, other: other })
+                        }
+
                         else {
-                            this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE, {node:other, other:node})
+                            this.emitter.fireEvent(Helles_Events.PLAYER_DAMAGE, { node: other, other: node })
                         }
                     }
                     break;
-                    
+
                 case Helles_Events.PLAYER_ENTERED_LEVEL_END:
                     {
                         console.log("*EVENT: * PLAYER_ENTERED_LEVEL_END **");
@@ -395,24 +434,31 @@ export default class GameLevel extends Scene {
                     }
                 case Helles_Events.LEVEL_END:
                     {
+                        this.lvl[this.currentlvl] = true
                         // Go to the next level
                         if (this.nextLevel) {
                             let sceneOptions = {
                                 physics: {
-                                    groupNames: ["ground", "player", "arrow","enemy", "proj","item"],
+                                    groupNames: ["ground", "player", "arrow", "enemy", "proj", "item"],
                                     collisions:
-                                    [
-                                        [0, 1, 1, 1, 1, 1],
-                                        [1, 0, 0, 1, 1, 1],
-                                        [1, 0, 0, 1, 0, 0],
-                                        [1, 1, 1, 1, 0, 0],
-                                        [1, 1, 0, 0, 0, 0],
-                                        [1, 0, 0, 0 ,0, 0]
-                                    ],
-                                    damage : this.playerDamage
+                                        [
+                                            [0, 1, 1, 1, 1, 1],
+                                            [1, 0, 0, 1, 1, 1],
+                                            [1, 0, 0, 1, 0, 0],
+                                            [1, 1, 1, 1, 0, 0],
+                                            [1, 1, 0, 0, 0, 0],
+                                            [1, 0, 0, 0, 0, 0]
+                                        ],
+                                    damage: this.playerDamage,
+                                    lvl: this.lvl,
+                                    currentlvl: this.currentlvl
                                 },
                             }
-                            this.sceneManager.changeToScene(this.nextLevel, {damage : this.playerDamage}, sceneOptions);
+                            this.sceneManager.changeToScene(this.nextLevel, { damage: this.playerDamage }, sceneOptions);
+                        }
+                        else
+                        {
+                            this.sceneManager.changeToScene(GameOver)
                         }
                     }
                     break;
@@ -427,29 +473,29 @@ export default class GameLevel extends Scene {
                         console.log("PLAYER DAMAGE Event");
                         let node = this.sceneGraph.getNode(event.data.get("node"));
                         let other = this.sceneGraph.getNode(event.data.get("other"));
-                        if (node === this.player){
+                        if (node === this.player) {
                             // let player = (<PlayerController> node._ai)
                             if (!this.playerinvincible) {
-                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, {playerHealth: this.playerHealth})
+                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, { playerHealth: this.playerHealth })
                                 // (<AnimatedSprite>player.owner).animation.playIfNotAlready("HIT",false,"IDLE_RIGHT")
                                 this.playerHealth = this.playerHealth - 1;
                                 this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
                                 this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                
+
                                 this.playerinvincible = true;
                                 this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
                             }
                         }
-                        else{
+                        else {
                             // let player = (<PlayerController> other._ai)
 
                             if (!this.playerinvincible) {
-                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, {playerHealth: this.playerHealth})
+                                this.emitter.fireEvent(Helles_Events.DAMAGE_ANIMATION, { playerHealth: this.playerHealth })
                                 // (<AnimatedSprite>player.owner).animation.playIfNotAlready("HIT",false,"IDLE_RIGHT")
                                 this.playerHealth = this.playerHealth - 1;
                                 this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
                                 this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                
+
                                 this.playerinvincible = true;
                                 this.playerinvicibleEndTime = this.playerinvicibleTime + this.playerinvicibleMAXTIME;
                             }
@@ -457,35 +503,31 @@ export default class GameLevel extends Scene {
 
                     }
                     break;
-                
-                case Helles_Events.PLAYER_PICK_KEY: 
-                {
-                    let node = this.sceneGraph.getNode(event.data.get("node"));
-                    let other = this.sceneGraph.getNode(event.data.get("other"));
-                    console.log((<Sprite>other).imageId)
-                    if (node === this.player){
 
-                        if((<Sprite>other).imageId === "healthPotion")
-                            {
+                case Helles_Events.PLAYER_PICK_KEY:
+                    {
+                        let node = this.sceneGraph.getNode(event.data.get("node"));
+                        let other = this.sceneGraph.getNode(event.data.get("other"));
+                        console.log((<Sprite>other).imageId)
+                        if (node === this.player) {
+
+                            if ((<Sprite>other).imageId === "healthPotion") {
                                 console.log("potion")
-                                if(this.playerHealth != this.playerMaxHealth)
-                                    {
-                                        this.playerHealth = this.playerHealth + 1;
-                                        this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
-                                        this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
-                                    }
+                                if (this.playerHealth != this.playerMaxHealth) {
+                                    this.playerHealth = this.playerHealth + 1;
+                                    this.healthLabel.size.set((this.playerHealth / this.playerMaxHealth) * this.healthLabelBrd.size.x, this.healthLabel.size.y);
+                                    this.healthLabel.position.set(this.healthLabelBrd.position.x - ((this.playerMaxHealth - this.playerHealth) / this.playerMaxHealth) * this.healthLabelBrd.size.x / 4, this.healthLabelBrd.position.y)
+                                }
                             }
-                        
-                        if((<Sprite>other).imageId === "key")
-                            {
+
+                            if ((<Sprite>other).imageId === "key") {
 
                                 console.log("key should be picked")
                                 let player = <PlayerController>this.player._ai
-                                player.key = true; 
+                                player.key = true;
                             }
-                        
-                        if((<Sprite>other).imageId === "damageUp")
-                            {
+
+                            if ((<Sprite>other).imageId === "damageUp") {
                                 this.playerDamage += 1;
                                 console.log("player damage " + this.playerDamage);
                                 (<PlayerController>this.player._ai).damage += 1;
@@ -504,9 +546,11 @@ export default class GameLevel extends Scene {
                             }
                             
 
-                        other.destroy();
+
+                            other.destroy();
+                        }
                     }
-                }
+                
                 break;
 
                 case Helles_Events.SUMMON_MINIONS:
@@ -534,10 +578,9 @@ export default class GameLevel extends Scene {
                     this.respawnPlayer();
                 }
             }
-
         }
 
-        
+
 
     }
 
@@ -552,9 +595,11 @@ export default class GameLevel extends Scene {
         this.addLayer("primary", 1);
         this.addLayer("terrain", 5);
         this.addLayer("background", 0);
+        this.addLayer("Esc",10);
+
     }
 
-    //init viewport 
+    //init viewport
     protected initViewport(): void {
         this.viewport.setZoomLevel(2)
     }
@@ -693,7 +738,7 @@ export default class GameLevel extends Scene {
 
     }
 
-    protected spawnEnemy(position:Vec2, enemyType: string) : void{
+    protected spawnEnemy(position: Vec2, enemyType: string): void {
         let enemy = this.add.animatedSprite(enemyType, "primary");
         enemy.position.set(position.x, position.y)
 
@@ -710,7 +755,7 @@ export default class GameLevel extends Scene {
         enemy.setTrigger("arrow", Helles_Events.ARROW_HIT_ENEMY, null);
         enemy.setGroup("enemy");
 
-            // send player position
+        // send player position
         enemy.addAI(EnemyController, { position: this.player.position, tilemap: "Main", enemyHealth: 2, enemyType: enemyType });// 
         enemy.setTrigger("player", Helles_Events.PLAYER_DAMAGE, null);
 
@@ -749,29 +794,29 @@ export default class GameLevel extends Scene {
         //this.player.collisionShape.overlaps()
     }
 
-    protected spawnItem(itemName: string , position: Vec2):void{
+    protected spawnItem(itemName: string, position: Vec2): void {
         console.log(position);
-        let key = this.add.sprite(itemName,"primary");
+        let key = this.add.sprite(itemName, "primary");
         let keyPosition = position;
         key.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
         key.setGroup("item");
-        key.position.set(keyPosition.x,keyPosition.y)
-        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
+        key.position.set(keyPosition.x, keyPosition.y)
+        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null);
 
     }
 
-    protected spawnPotion(position: Vec2):void{
+    protected spawnPotion(position: Vec2): void {
         console.log(position);
-        let key = this.add.sprite("healthPotion","primary");
+        let key = this.add.sprite("healthPotion", "primary");
         let keyPosition = position;
         key.addPhysics(new AABB(Vec2.ZERO, new Vec2(16, 8)));
         key.setGroup("item");
-        key.position.set(keyPosition.x,keyPosition.y)
-        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null); 
+        key.position.set(keyPosition.x, keyPosition.y)
+        key.setTrigger("player", Helles_Events.PLAYER_PICK_KEY, null);
 
     }
 
-    
+
 
     protected initArrows(postion: Vec2, aiOptions: Record<string, any>): void {
 
@@ -789,7 +834,7 @@ export default class GameLevel extends Scene {
         if (dirction === "right") {
             arrowPostion.set(position.x + 32, position.y)
             this.initArrows(position, { direction: 1 })
-            
+
         }
         else if (dirction === "left") {
             arrowPostion.set(position.x - 32, position.y)
@@ -808,7 +853,7 @@ export default class GameLevel extends Scene {
      * @param enemyType 
      * @param aiOptions 
      */
-    protected initProj(position: Vec2, enemyType:string, aiOptions: Record<string, any>): void {
+    protected initProj(position: Vec2, enemyType: string, aiOptions: Record<string, any>): void {
         console.log(enemyType)
         if(enemyType === "lurker" )
             {
@@ -834,19 +879,19 @@ export default class GameLevel extends Scene {
         this.enemyProj.setTrigger("player", Helles_Events.PROJ_HIT_PLAYER, null);
     }
 
-    protected spawnProj(position: Vec2, dirction: Vec2, enemyType:string): void {
+    protected spawnProj(position: Vec2, dirction: Vec2, enemyType: string): void {
         let projPosition: Vec2 = new Vec2(0, 0);
-       
+
         if (dirction.x === 1) {
             projPosition.set(position.x, position.y)
             this.initProj(projPosition, enemyType, { direction: dirction })
-            
+
         }
         else if (dirction.x === -1) {
 
             projPosition.set(position.x, position.y)
             this.initProj(projPosition, enemyType, { direction: dirction })
-           
+
         }
     }
 
@@ -929,4 +974,22 @@ export default class GameLevel extends Scene {
         }
     }
 
+    // protected dyingTimer(timer:Timer, node: GameNode){
+    //     if(timer.isStopped)
+    // }
+    protected freezeAllSprite(){
+        this.getSceneGraph().getAllNodes().forEach(sprite => {
+            if(sprite instanceof AnimatedSprite){
+                sprite.aiActive = false;
+            }
+        });
+    }
+
+    protected unfreezeAllSprite(){
+        this.getSceneGraph().getAllNodes().forEach(sprite => {
+            if(sprite instanceof AnimatedSprite){
+                sprite.aiActive = true;
+            }
+        });
+    }
 }
