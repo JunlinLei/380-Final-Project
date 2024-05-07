@@ -19,7 +19,8 @@ export default class Level2 extends GameLevel{
         //TODO new tile map
         this.load.tilemap("level2","helles_assets/tilemaps/helles_level2.json");
         this.load.object("levelData", "helles_assets/data/enemies/level2data.json") 
-
+        // load background image 
+        this.load.image("bg3","helles_assets/images/level1_bg3.png" )
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         // this.load.image("arrow","helles_assets/spritesheets/arrow.png")
@@ -29,13 +30,12 @@ export default class Level2 extends GameLevel{
         // this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
         // this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
-        // load background image for level 1
-        // this.load.image("trees", "helles_assets/images/Reverse_forrest.jpg");
-
+        
         this.load.audio("level2_music", "helles_assets/music/level2.mp3")
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
+
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
    
@@ -56,9 +56,6 @@ export default class Level2 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
-        this.load.keepImage("portal")
-        this.load.keepSpritesheet("fly")
-        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level2_music"})
 
     }
 
@@ -93,5 +90,15 @@ export default class Level2 extends GameLevel{
         
     }
 
+    initLayers(): void {
+
+    this.addParallaxLayer("bg3", new Vec2(0.5, 0.5), -5);
+    let bg3 = this.add.sprite("bg3", "bg3");
+    bg3.position.set(bg3.size.x/2, bg3.size.y/2);
+
+    super.initLayers();
+
+
+    }
 
 }
