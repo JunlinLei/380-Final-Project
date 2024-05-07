@@ -45,7 +45,12 @@ export default class Level4 extends GameLevel{
         this.load.keepImage("healthPotion")
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
-        
+        this.load.keepImage("manaPotion")
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
+
+
+
     }
 
     startScene(): void {

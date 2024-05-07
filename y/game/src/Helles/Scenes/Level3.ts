@@ -11,8 +11,10 @@ export default class Level3 extends GameLevel{
 
         //load map and player
         //TODO new tile map
-        this.load.tilemap("level3","helles_assets/tilemaps/helles_level3.json");
+        this.load.tilemap("level3","helles_assets/tilemaps/helles_new_level3.json");
         this.load.object("levelData", "helles_assets/data/enemies/level3data.json") 
+        this.load.audio("level3_music", "helles_assets/music/level3.mp3")
+
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
@@ -43,7 +45,11 @@ export default class Level3 extends GameLevel{
         this.load.keepImage("healthPotion")
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
-        
+        this.load.keepImage("manaPotion")
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level3_music"})
+
     }
 
     startScene(): void {
@@ -52,9 +58,9 @@ export default class Level3 extends GameLevel{
         //Add tile map 
         this.add.tilemap("level3", new Vec2(2,2));
 
-        this.viewport.setBounds(0,0, 64*32,20*32);
+        this.viewport.setBounds(0,0, 64*32,64*32);
 
-        this.playerSpawn = new Vec2(5*32, 14*32);
+        this.playerSpawn = new Vec2(3*32, 61*32)
 
         if(this.sceneOptions.physics.damage != undefined){
             this.playerDamage = this.sceneOptions.physics.damage;
@@ -67,7 +73,7 @@ export default class Level3 extends GameLevel{
        
         // TODO specify next level
         this.nextLevel = Level4;
-        
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level3_music", loop:true,holdReference: true})
 
     }
 

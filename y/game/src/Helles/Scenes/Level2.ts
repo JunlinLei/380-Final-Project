@@ -33,10 +33,10 @@ export default class Level2 extends GameLevel{
         // load background image for level 1
         // this.load.image("trees", "helles_assets/images/Reverse_forrest.jpg");
 
+        this.load.audio("level2_music", "helles_assets/music/level2.mp3")
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
         this.load.spritesheet("wraith","helles_assets/spritesheets/wraith.json");
-
         // load the mini boss
         this.load.spritesheet("moss", "helles_assets/spritesheets/moss.json");
 
@@ -53,7 +53,11 @@ export default class Level2 extends GameLevel{
         this.load.keepImage("healthPotion")
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
-        
+        this.load.keepImage("manaPotion")
+        this.load.keepImage("portal")
+        this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level2_music"})
+
     }
 
     startScene(): void {
@@ -62,7 +66,7 @@ export default class Level2 extends GameLevel{
         //Add tile map 
         this.add.tilemap("level2", new Vec2(2,2));
 
-        this.viewport.setBounds(0,0, 64*32,20*32);
+        this.viewport.setBounds(0,0, 64*32,64*32);
 
         this.playerSpawn = new Vec2(5*32, 14*32)
         
@@ -73,11 +77,13 @@ export default class Level2 extends GameLevel{
         super.startScene();
 
         // this.player.position.copy(this.playerSpawn);
-        this.addLevelEnd(new Vec2(60, 13), new Vec2(5, 5));
+        this.addLevelEnd(new Vec2(61, 7), new Vec2(1, 1));
 
         console.log(this.sceneOptions)
         // TODO specify next level
         this.nextLevel = Level3;
+
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level2_music", loop:true,holdReference: true})
 
     }
 

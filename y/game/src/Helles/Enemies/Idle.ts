@@ -20,7 +20,7 @@ export default class Idle extends EnemyState {
 	
 	onEnter(): void {
 
-		this.gravity = this.parent.gravity;
+		// this.gravity = this.parent.gravity;
 		(<AnimatedSprite>this.owner).animation.play("IDLE", true);
 	}
 
@@ -39,6 +39,11 @@ export default class Idle extends EnemyState {
 		{	
 			this.finished(EnemyStates.AGGRO)
 		}
+
+		if(distance <= 7 * tileDistance && this.parent.enemyType === "fly")
+			{
+				this.finished(EnemyStates.CHASE);
+			}
 	}
 
 	onExit(): Record<string, any> {

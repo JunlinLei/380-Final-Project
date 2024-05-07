@@ -24,9 +24,30 @@ export default abstract class InAir extends PlayerState {
                 this.finished(PlayerStates.INAIRATTACK);
                 this.parent.attackTimer.start();
             }
+        
+        if(Input.isJustPressed("skill") && this.parent.attackTimer.isStopped())
+            {
+                    this.finished(PlayerStates.INAIRSKILL);
+                    this.parent.attackTimer.start();
+            }
+        
+        if(Input.isJustPressed("jump")&& this.parent.isAirJump ===false)
+            {
+                this.parent.velocity.y = -380
+                this.parent.isAirJump = true;
+                this.parent.initJumpPos = this.owner.position.y;
+                this.finished(PlayerStates.JUMP)
+            }
 
+        if(this.owner.onCeiling)
+            {
+                console.log("ceiling")
+                this.parent.velocity.y = 0
+                this.finished("fall")
+                }
 
         if(this.owner.onGround){
+            this.parent.isAirJump = false;
 			this.finished(PlayerStates.PREVIOUS);
 		}
     }

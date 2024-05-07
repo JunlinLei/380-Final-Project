@@ -13,6 +13,8 @@ export enum Helles_Events {
     DAMAGE_ANIMATION = "DamgeAnimation",
     PLAYER_PICK_KEY = "playerPickKey",
     MONSTER_DYING = "MonsterDying",
+    SUMMON_MINIONS = "SummonMinions",
+    PLAYER_SKILL = "PlayerSkill"
 }
 
 
