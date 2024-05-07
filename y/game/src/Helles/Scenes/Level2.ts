@@ -67,7 +67,7 @@ export default class Level2 extends GameLevel{
 
         this.viewport.setBounds(0,0, 64*32,64*32);
 
-        this.playerSpawn = new Vec2(5*32, 14*32)
+        this.playerSpawn = new Vec2(2*32, 60*32)
 
         this.playerDamage = this.sceneOptions.physics.damage;
         
