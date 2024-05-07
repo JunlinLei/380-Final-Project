@@ -19,7 +19,8 @@ export default class Level2 extends GameLevel{
         //TODO new tile map
         this.load.tilemap("level2","helles_assets/tilemaps/helles_level2.json");
         this.load.object("levelData", "helles_assets/data/enemies/level2data.json") 
-
+        // load background image 
+        this.load.image("bg3","helles_assets/images/level1_bg3.png" )
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
@@ -62,9 +63,6 @@ export default class Level2 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
-        this.load.keepImage("portal")
-        this.load.keepSpritesheet("fly")
-        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level2_music"})
 
     }
 
@@ -76,7 +74,7 @@ export default class Level2 extends GameLevel{
 
         this.viewport.setBounds(0,0, 64*32,64*32);
 
-        this.playerSpawn = new Vec2(5*32, 14*32)
+        this.playerSpawn = new Vec2(2*32, 60*32)
         
         if(this.sceneOptions.physics.damage != undefined){
             this.playerDamage = this.sceneOptions.physics.damage;
@@ -100,4 +98,14 @@ export default class Level2 extends GameLevel{
         
     }
 
+    initLayers(): void {
+
+    this.addParallaxLayer("bg3", new Vec2(0.5, 0.5), -5);
+    let bg3 = this.add.sprite("bg3", "bg3");
+    bg3.position.set(bg3.size.x/2, bg3.size.y/2);
+
+    super.initLayers();
+
+
+    }
 }
