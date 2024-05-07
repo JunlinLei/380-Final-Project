@@ -14,6 +14,9 @@ export default class Level6 extends GameLevel{
         this.load.tilemap("level6","helles_assets/tilemaps/helles_level6.json");
         this.load.object("levelData", "helles_assets/data/enemies/level6data.json") 
 
+        this.load.image("bg3","helles_assets/images/level6_bg3.png" )
+        this.load.image("bg2","helles_assets/images/level6_bg2.png" )
+
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
         this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
@@ -88,5 +91,22 @@ export default class Level6 extends GameLevel{
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
     }
+    initLayers(): void {
 
+    this.addParallaxLayer("bg3", new Vec2(0.75, 0.75), -10);
+        this.addParallaxLayer("bg2", new Vec2(0.8, 0.8), -5);
+
+        
+        let bg3 = this.add.sprite("bg3", "bg3");
+        let bg2 = this.add.sprite("bg2", "bg2");
+
+        bg3.scale.set(2,2)
+        bg2.scale.set(2,2)
+
+        bg3.position.set(bg3.size.x, bg3.size.y/2);
+        bg2.position.set(bg2.size.x/2, bg2.size.y/2)
+
+        
+        super.initLayers();
+    }
 }
