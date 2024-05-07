@@ -23,6 +23,7 @@ import EnemyProjController from "../EnemyProj/EnemyProjController";
 import { Helles_Events, BattlerEvent } from "../helles_enums";
 // import HW5_ParticleSystem from "../HW5_ParticleSystem";
 import PlayerController from "../Player/PlayerController";
+import GameOver from "./GameOver";
 import MainMenu from "./mainMenu";
 
 export default class GameLevel extends Scene {
@@ -454,6 +455,10 @@ export default class GameLevel extends Scene {
                                 },
                             }
                             this.sceneManager.changeToScene(this.nextLevel, { damage: this.playerDamage }, sceneOptions);
+                        }
+                        else
+                        {
+                            this.sceneManager.changeToScene(GameOver)
                         }
                     }
                     break;

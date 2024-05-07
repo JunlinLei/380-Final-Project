@@ -13,6 +13,10 @@ export default class Level4 extends GameLevel{
         //TODO new tile map
         this.load.tilemap("level4","helles_assets/tilemaps/helles_level4.json");
         this.load.object("levelData", "helles_assets/data/enemies/level4data.json") 
+         // load background image 
+         this.load.image("bg3","helles_assets/images/level4_bg.png" )
+         this.load.audio("level4_music", "helles_assets/music/level4.mp3")
+
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
         this.load.image("arrow","helles_assets/spritesheets/arrow.png")
@@ -58,6 +62,7 @@ export default class Level4 extends GameLevel{
         this.load.keepImage("manaPotion")
         this.load.keepImage("portal")
         this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level4_music"})
 
 
 
@@ -83,6 +88,7 @@ export default class Level4 extends GameLevel{
        
         // TODO specify next level
         this.nextLevel = Level5;
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level4_music", loop:true,holdReference: true})
 
 
     }
@@ -90,5 +96,17 @@ export default class Level4 extends GameLevel{
     updateScene(deltaT: number): void {
         super.updateScene(deltaT);
     }
+
+    initLayers(): void {
+
+        this.addParallaxLayer("bg3", new Vec2(0.5, 0.5), -5);
+        let bg3 = this.add.sprite("bg3", "bg3");
+        bg3.scale.set(2,2)
+        bg3.position.set(bg3.size.x/2, bg3.size.y/2);
+    
+        super.initLayers();
+    
+    
+        }
 
 }

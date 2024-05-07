@@ -39,7 +39,7 @@ export default class Level6 extends GameLevel{
         //adding sound effect 
         this.load.audio("shoot", "helles_assets/sound/arrow_shooting.mp3")
         this.load.audio("enemy_get_hit", "helles_assets/sound/enemy_getting_hit.mp3")
-        this.load.audio("level1_music", "helles_assets/music/level1.mp3")
+        this.load.audio("level6_music", "helles_assets/music/level6.mp3")
 
         
     }
@@ -58,6 +58,8 @@ export default class Level6 extends GameLevel{
         this.load.keepImage("manaPotion")
         this.load.keepImage("portal")
         this.load.keepSpritesheet("fly")
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level6_music"})
+
     }
 
     startScene(): void {
@@ -74,12 +76,12 @@ export default class Level6 extends GameLevel{
 
         super.startScene();
 
-        this.addLevelEnd(new Vec2(10,100 ), new Vec2(5, 5));
+        this.addLevelEnd(new Vec2(27,116), new Vec2(5, 5));
        
        
         // TODO specify next level
-        this.nextLevel = Level1;
 
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key:"level6_music", loop:true,holdReference: true})
 
     }
 
