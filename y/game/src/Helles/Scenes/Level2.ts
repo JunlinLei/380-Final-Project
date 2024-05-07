@@ -63,7 +63,7 @@ export default class Level2 extends GameLevel{
         this.load.keepImage("damageUp")
         this.load.keepImage("wave")
         this.load.keepImage("manaPotion")
-
+        this.emitter.fireEvent(GameEventType.STOP_SOUND,{key: "level2_music"})
     }
 
     startScene(): void {
