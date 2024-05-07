@@ -81,7 +81,7 @@ export default class Level5 extends GameLevel{
 
         super.startScene();
 
-        this.addLevelEnd(new Vec2(3, 6), new Vec2(5, 5));
+        this.addLevelEnd(new Vec2(10, 50), new Vec2(5, 5));
        
        
         // TODO specify next level
