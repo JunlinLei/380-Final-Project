@@ -80,7 +80,7 @@ export default class Control extends Scene {
             "Q",
             "J",
             "K or W",
-            "ESC"
+            "N"
         ]
 
         //Display all action on control screen
