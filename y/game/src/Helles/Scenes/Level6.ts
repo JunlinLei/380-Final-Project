@@ -12,15 +12,15 @@ export default class Level6 extends GameLevel{
         //load map and player
         //TODO new tile map
         this.load.tilemap("level6","helles_assets/tilemaps/helles_level6.json");
-        this.load.object("levelData", "helles_assets/data/enemies/level5data.json") 
+        this.load.object("levelData", "helles_assets/data/enemies/level6data.json") 
 
         this.load.spritesheet("player","helles_assets/spritesheets/hunter.json");
-        // this.load.image("arrow","helles_assets/spritesheets/arrow.png")
-        // this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
-        // this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
-        // this.load.image("flame", "helles_assets/spritesheets/flame.png")
-        // this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
-        // this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
+        this.load.image("arrow","helles_assets/spritesheets/arrow.png")
+        this.load.image("key","helles_assets/spritesheets/Helles_Key.png")
+        this.load.image("fireball", "helles_assets/spritesheets/blue_fireball.png")
+        this.load.image("flame", "helles_assets/spritesheets/flame.png")
+        this.load.image("healthPotion", "helles_assets/spritesheets/heart.png")
+        this.load.image("damageUp", "helles_assets/spritesheets/damage_up.png")
 
         //add other monster and music later on 
         this.load.spritesheet("lurker","helles_assets/spritesheets/lurker.json");
@@ -55,15 +55,15 @@ export default class Level6 extends GameLevel{
         //Add tile map 
         this.add.tilemap("level6", new Vec2(2,2));
 
-        this.viewport.setBounds(0,0, 30*32, 120*32);
+        this.viewport.setBounds(0,0, 30*32,120*32);
 
-        this.playerSpawn = new Vec2(4*32, 24*32)
+        this.playerSpawn = new Vec2(4*32, 4*32)
 
         this.playerDamage = this.sceneOptions.physics.damage;
 
         super.startScene();
 
-        this.addLevelEnd(new Vec2(3, 6), new Vec2(5, 5));
+        this.addLevelEnd(new Vec2(9,100 ), new Vec2(5, 5));
        
        
         // TODO specify next level

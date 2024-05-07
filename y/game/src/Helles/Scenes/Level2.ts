@@ -77,7 +77,7 @@ export default class Level2 extends GameLevel{
         super.startScene();
 
         // this.player.position.copy(this.playerSpawn);
-        this.addLevelEnd(new Vec2(60, 13), new Vec2(5, 5));
+        this.addLevelEnd(new Vec2(61, 7), new Vec2(1, 1));
 
         
 
